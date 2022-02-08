@@ -12,8 +12,8 @@ public class Lead : MonoBehaviour
     public GameObject fire;
 
 
-    private NavMeshAgent navMeshAgent;
-    private Animator animator;
+    public NavMeshAgent navMeshAgent;
+    public Animator animator;
     private Zombie zb;
 
     private LeadState lState = LeadState.Melee;
@@ -37,7 +37,7 @@ public class Lead : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (fire.activeSelf)
+        if (fire.activeSelf || InTrowLifebuoy)//在开火或者扔泳圈时不可动
             return;
         if (Main.GameFinish || null == navMeshAgent)
             return;
@@ -64,7 +64,8 @@ public class Lead : MonoBehaviour
                 }
                 else
                 {
-                    if (PassLv1 == false && (hit.point.z >= -17f || hit.point.x> -13.3f)) return;//第一个僵尸没打死不可前往流程2   
+                    if (PassLv1 == false && (hit.point.z >= -17f || hit.point.x> -13.3f)) return;//第一个僵尸没打死不可前往流程2  
+                    if (PassLv2 == false && (hit.point.x > -0.7f)) return;//第一个僵尸没打死不可前往流程2   
                     navMeshAgent.SetDestination(hit.point);
                     DataManagement.GetInstance().SelectZombie = null;
                 }
@@ -78,8 +79,13 @@ public class Lead : MonoBehaviour
             setFire = false;
         }
         
-        if (clickName == "ferry" && navMeshAgent.remainingDistance < 0.5f)//救生艇
+        if (clickName == "ferry" && navMeshAgent.remainingDistance < 5f)//救生艇
         {
+            navMeshAgent.isStopped = true;
+            navMeshAgent.updatePosition = false;
+            animator.SetBool("walk", false);
+            animator.Play("idle", 0, 0.0f);
+
             Main.WinGame();
             setFire = false;
         }
@@ -93,11 +99,12 @@ public class Lead : MonoBehaviour
                     if (navMeshAgent.remainingDistance < 10f && TrowLifebuoy == false)
                     {
                         TrowLifebuoy = true;
+                        InTrowLifebuoy = true;
                         StartCoroutine(LifebuoyAnim());
                     }
                     break;
                 case LeadState.shot:
-                    if (zb == null || zb.IsDead || !ShotingFinish) break;
+                    if (zb == null || zb.IsDead || !ShotingFinish || !DataManagement.GetInstance().SelectZombie) break;//套泳圈离枪太近bug 
                     if (navMeshAgent.remainingDistance < 12f)
                     {
                         navMeshAgent.isStopped = true;
@@ -112,7 +119,7 @@ public class Lead : MonoBehaviour
         }
         else
         {
-            if (navMeshAgent.remainingDistance < 0.2f)
+            if (navMeshAgent.remainingDistance < 0.2f && !Main.GameFinish)
             {
                 animator.SetBool("walk", false);
             }
@@ -128,6 +135,7 @@ public class Lead : MonoBehaviour
     }
 
     private bool TrowLifebuoy = false;
+    private bool InTrowLifebuoy = false;
     IEnumerator LifebuoyAnim()
     {
         animator.SetBool("throw", true);
@@ -148,10 +156,13 @@ public class Lead : MonoBehaviour
 
         animator.SetBool("walk", false);
         navMeshAgent.isStopped = true;
+        InTrowLifebuoy = false;
+        //TrowLifebuoy = false;
     }
 
     private bool ShotingFinish = true;
     private bool PassLv1 = false;//打死第一只僵尸后才可通行
+    public bool PassLv2 = false;
     IEnumerator FireAnim()
     {
         //animator.SetBool("throw", true);

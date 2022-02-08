@@ -9,6 +9,7 @@ public class Zombie : MonoBehaviour
     public Transform Target;
     //public GameObject SelectedBox;
     public GameObject Lifebuoy;
+    public GameObject Hand;
     public Main Main;
 
     private NavMeshAgent navMeshAgent;
@@ -81,13 +82,28 @@ public class Zombie : MonoBehaviour
         }
     }
 
+    public RectTransform UIRoot;
     internal void OnDie()
     {
         if (IsDead) return;
         IsDead = true;
 
         if (Lifebuoy != null) Lifebuoy.gameObject.SetActive(false);
-        StartCoroutine(FireAnim());        
+        StartCoroutine(FireAnim());
+
+        Transform hurtPos = transform.Find("HurtPos");
+        Vector3 vec3 = Camera.main.WorldToScreenPoint(hurtPos.position);
+        Vector2 lp = new Vector2();
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(UIRoot, vec3, null, out lp);
+        if(transform.name == "Zombie1" || transform.name == "Zombie2")
+        {
+            Main.ShowHurtTxt(1, lp);
+        }
+        else
+        {
+            Main.ShowHurtTxt(2, lp);
+            Main.Lead.GetComponent<Lead>().PassLv2 = true;
+        }
     }
 
     public void Selected(bool sele)
@@ -98,18 +114,26 @@ public class Zombie : MonoBehaviour
     public void SetLifebuoy(bool set)
     {
         Lifebuoy.SetActive(set);
+        Hand.SetActive(false);
     }
 
     public bool IsDead = false;
     IEnumerator FireAnim()
     {
-        navMeshAgent.isStopped = true;
+        if(navMeshAgent!=null)
+        {
+            navMeshAgent.isStopped = true;
+        }
         animator.SetBool("die", true);
         for (float timer = 2; timer >= 0; timer -= Time.deltaTime)
         {
             yield return 0;
         }
         this.gameObject.SetActive(false);
-        Main.onWinTips();
+
+        if(transform.name == "Zombie3")
+        {
+            Main.onWinTips();
+        }
     }
 }

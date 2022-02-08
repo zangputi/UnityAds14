@@ -33,7 +33,10 @@ namespace Game
             gameObject.SetActive(true);
             int num = Random.Range(800, 900);
             number.SetString("b" + num);
-            animator.Play("Pop");
+            animator.Play("Pop", 0, 0.0f);
+
+            CanvasGroup cg = number.transform.GetComponent<CanvasGroup>();
+            cg.alpha = 1.0f;
         }
     }
 }
