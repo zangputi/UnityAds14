@@ -105,8 +105,9 @@ public class Main : MonoBehaviour
         IsWin = true;
         GameFinish = true;
         //win.SetActive(true);
-        winTips.SetActive(false);
-        ShowResult();
+        //winTips.SetActive(false);
+        //ShowResult();
+        //玩家点击了
     }
 
     IEnumerator Countdown()
@@ -126,9 +127,10 @@ public class Main : MonoBehaviour
 
     public void ShowResult()
     {
+        winTips.SetActive(false);
         //if (Screen.width > Screen.height)
         //{
-            Transform Success = H.Find("Success");
+        Transform Success = H.Find("Success");
             Transform Fail = H.Find("Fail");
             Transform UI = H.Find("UI");
 

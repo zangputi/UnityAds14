@@ -10,6 +10,7 @@ public class Zombie : MonoBehaviour
     //public GameObject SelectedBox;
     public GameObject Lifebuoy;
     public GameObject Hand;
+    public GameObject ShotStart;
     public Main Main;
 
     private NavMeshAgent navMeshAgent;
@@ -87,6 +88,7 @@ public class Zombie : MonoBehaviour
     {
         if (IsDead) return;
         IsDead = true;
+        ShotStart.SetActive(false);
 
         if (Lifebuoy != null) Lifebuoy.gameObject.SetActive(false);
         StartCoroutine(FireAnim());
@@ -115,6 +117,7 @@ public class Zombie : MonoBehaviour
     {
         Lifebuoy.SetActive(set);
         Hand.SetActive(false);
+        ShotStart.SetActive(true);
     }
 
     public bool IsDead = false;

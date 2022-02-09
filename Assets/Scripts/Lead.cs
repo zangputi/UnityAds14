@@ -15,6 +15,7 @@ public class Lead : MonoBehaviour
     public NavMeshAgent navMeshAgent;
     public Animator animator;
     private Zombie zb;
+    public Transform Ferry;
 
     private LeadState lState = LeadState.Melee;
     private bool setFire = true;
@@ -40,7 +41,22 @@ public class Lead : MonoBehaviour
         if (fire.activeSelf || InTrowLifebuoy)//在开火或者扔泳圈时不可动
             return;
         if (Main.GameFinish || null == navMeshAgent)
+        {
+            if (Main.GameFinish && Main.IsWin == true)
+            {
+                if (Input.GetMouseButton(0))
+                {
+                    object ray = Camera.main.ScreenPointToRay(Input.mousePosition); //屏幕坐标转射线
+                    RaycastHit hit;                                                     //射线投射碰撞
+                    bool isHit = Physics.Raycast((Ray)ray, out hit);             //射线投射(射线，结构体信息) ；返回bool 值 是否检测到碰撞
+                    if (hit.collider && hit.collider.name == "ferry")
+                    {
+                        Main.ShowResult();
+                    }
+                }
+            }
             return;
+        }
         curZb = null;
         if (Input.GetMouseButton(0))
         {
@@ -78,16 +94,20 @@ public class Lead : MonoBehaviour
             Main.onArrowEnd();
             setFire = false;
         }
-        
-        if (clickName == "ferry" && navMeshAgent.remainingDistance < 5f)//救生艇
-        {
-            navMeshAgent.isStopped = true;
-            navMeshAgent.updatePosition = false;
-            animator.SetBool("walk", false);
-            animator.Play("idle", 0, 0.0f);
 
-            Main.WinGame();
-            setFire = false;
+        if (Main.GameFinish == false)//救生艇
+        {
+            float dis = Vector3.Distance(Ferry.position, transform.position);
+            if(dis <= 10f)
+            {
+                navMeshAgent.isStopped = true;
+                navMeshAgent.updatePosition = false;
+                animator.SetBool("walk", false);
+                animator.Play("idle", 0, 0.0f);
+
+                Main.WinGame();
+                setFire = false;
+            }
         }
 
         //if (null != zb && !navMeshAgent.pathPending)
