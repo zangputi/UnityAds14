@@ -77,7 +77,8 @@ public class Main : MonoBehaviour
     {
         arrow.SetActive(false);
         gun.SetActive(false);
-        zb1.Target = lead1.transform;
+        lead1.EquipGun();
+        //zb1.Target = lead1.transform;
     }
 
     public void onWinTips()
@@ -156,6 +157,11 @@ public class Main : MonoBehaviour
     public void ReGame()
     {
         //SceneManager.LoadScene(0);
+    }
+
+    public void TorusHide()
+    {
+        lead1.TorusHide();
     }
 
     internal void ShotZombie()

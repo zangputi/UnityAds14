@@ -27,5 +27,12 @@ public class DataManagement
             lifeZZombie.SetLifebuoy(true);
         }
     }
+    public void SetShotStart()
+    {
+        if (null != lifeZZombie)
+        {
+            lifeZZombie.SetShotStart(true);
+        }
+    }
 
 }

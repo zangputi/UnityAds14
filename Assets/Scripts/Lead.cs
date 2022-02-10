@@ -8,7 +8,8 @@ public class Lead : MonoBehaviour
 {
 
     public Main Main;
-    public GameObject Lifebuoy;
+    public GameObject Lifebuoy;//没套僵尸前的救生圈
+    public GameObject LifebuoyAtk;//套僵尸动作的救生圈
     public GameObject fire;
 
 
@@ -21,6 +22,7 @@ public class Lead : MonoBehaviour
     private bool setFire = true;
     private string clickName = "";
 
+    public Transform Gun;
     public enum LeadState
     {
         Melee,
@@ -116,7 +118,7 @@ public class Lead : MonoBehaviour
             switch (lState)
             {
                 case LeadState.Melee:
-                    if (navMeshAgent.remainingDistance < 10f && TrowLifebuoy == false)
+                    if (navMeshAgent.remainingDistance < 6f && TrowLifebuoy == false)
                     {
                         TrowLifebuoy = true;
                         InTrowLifebuoy = true;
@@ -151,6 +153,7 @@ public class Lead : MonoBehaviour
         Lifebuoy.SetActive(false);
         setFire = true;
         navMeshAgent.isStopped = true;
+        //animator.SetBool("Gun", true);
         animator.SetBool("die", true);
     }
 
@@ -159,6 +162,8 @@ public class Lead : MonoBehaviour
     IEnumerator LifebuoyAnim()
     {
         animator.SetBool("throw", true);
+        Lifebuoy.gameObject.SetActive(false);
+        LifebuoyAtk.gameObject.SetActive(true);
         navMeshAgent.isStopped = true;
 
         this.transform.LookAt(zb.transform);
@@ -170,13 +175,14 @@ public class Lead : MonoBehaviour
         navMeshAgent.updateRotation = true;
         Lifebuoy.SetActive(false);
         lState = LeadState.shot;
-        DataManagement.GetInstance().SetLifebuoy();
+        //DataManagement.GetInstance().SetLifebuoy();
         Main.onFingerEnd();
         //Main.NpcUp();
 
         animator.SetBool("walk", false);
         navMeshAgent.isStopped = true;
         InTrowLifebuoy = false;
+        animator.SetBool("throw", false);
         //TrowLifebuoy = false;
     }
 
@@ -186,7 +192,7 @@ public class Lead : MonoBehaviour
     IEnumerator FireAnim()
     {
         //animator.SetBool("throw", true);
-        animator.Play("Throw", 0, 0.0f);
+        animator.Play("GunShot", 0, 0.0f);
         animator.SetBool("walk", false);
         navMeshAgent.updateRotation = false;
         navMeshAgent.isStopped = true;
@@ -211,5 +217,21 @@ public class Lead : MonoBehaviour
         navMeshAgent.updateRotation = true;
 
         ShotingFinish = true;
+    }
+
+    private bool IsEquipGun = false;
+    public void EquipGun()
+    {
+        Gun.gameObject.SetActive(true);
+        IsEquipGun = true;
+
+        animator.SetBool("Gun", true);
+        DataManagement.GetInstance().SetShotStart();
+    }
+
+    public void TorusHide()
+    {
+        LifebuoyAtk.gameObject.SetActive(false);
+        DataManagement.GetInstance().SetLifebuoy();
     }
 }

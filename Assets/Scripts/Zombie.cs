@@ -117,6 +117,13 @@ public class Zombie : MonoBehaviour
     {
         Lifebuoy.SetActive(set);
         Hand.SetActive(false);
+        Target = null;
+        animator.SetBool("walk", false);
+        navMeshAgent.isStopped = true;
+    }
+
+    public void SetShotStart(bool set)
+    {
         ShotStart.SetActive(true);
     }
 
