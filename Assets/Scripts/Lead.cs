@@ -105,7 +105,7 @@ public class Lead : MonoBehaviour
                 navMeshAgent.isStopped = true;
                 navMeshAgent.updatePosition = false;
                 animator.SetBool("walk", false);
-                animator.Play("idle", 0, 0.0f);
+                animator.Play("GunIdle", 0, 0.0f);
 
                 Main.WinGame();
                 setFire = false;

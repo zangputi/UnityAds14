@@ -32,6 +32,7 @@ public class Main : MonoBehaviour
     public GameObject HurtTxt3;
 
     public float ScaleP = 2.0f;
+    public Camera UICamera;
     void Start()
     {
         //finger.SetActive(true);
@@ -49,6 +50,7 @@ public class Main : MonoBehaviour
 
     public Transform H;
     public Transform S;
+    public Transform BgM;
     public void ScreenAdapter()
     {
         if(Screen.width > Screen.height)
@@ -56,14 +58,14 @@ public class Main : MonoBehaviour
             ScaleP = 1.0f;
             H.gameObject.SetActive(true);
             S.gameObject.SetActive(false);
-            Camera.main.orthographicSize = 9.41f;
+            UICamera.orthographicSize = Camera.main.orthographicSize = 9.41f;
         }
         else
         {
             ScaleP = 0.5f;
             H.gameObject.SetActive(false);
             S.gameObject.SetActive(true);
-            Camera.main.orthographicSize = 17.01f;
+            UICamera.orthographicSize = Camera.main.orthographicSize = 17.01f;
         }
     }
 
@@ -146,6 +148,8 @@ public class Main : MonoBehaviour
             Success.gameObject.SetActive(IsWin);
             Fail.gameObject.SetActive(!IsWin);
             UI.gameObject.SetActive(false);
+
+        BgM.gameObject.SetActive(false);
         //}
         //else
         //{
