@@ -13,7 +13,7 @@ public class Lead : MonoBehaviour
     public GameObject fire;
 
 
-    public NavMeshAgent navMeshAgent;
+    //public NavMeshAgent navMeshAgent;
     public Animator animator;
     private Zombie zb;
     public Transform Ferry;
@@ -23,6 +23,8 @@ public class Lead : MonoBehaviour
     private string clickName = "";
 
     public Transform Gun;
+    public Transform BucketPoint;
+    private D3ObjMove MoveControler;
     public enum LeadState
     {
         Melee,
@@ -31,9 +33,24 @@ public class Lead : MonoBehaviour
 
     void Start()
     {
-        navMeshAgent = GetComponent<NavMeshAgent>();
+        //navMeshAgent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();     //动画组件
         setFire = true;
+    }
+
+    private void Awake()
+    {
+        MoveControler = transform.GetComponent<D3ObjMove>();
+        MoveControler.MoveFunc = new D3ObjMove.ActFunc(PlayMove);
+        MoveControler.IdleFunc = new D3ObjMove.ActFunc(PlayIdle);
+    }
+
+    List<Transform> MoveNodes;
+    public void StartMove(List<Transform> mtfs)
+    {
+        MoveNodes = mtfs;
+        MoveControler.MoveTo(mtfs);
+        //能到这里说明点的不是僵尸
     }
 
     Zombie curZb;
@@ -42,7 +59,7 @@ public class Lead : MonoBehaviour
     {
         if (fire.activeSelf || InTrowLifebuoy)//在开火或者扔泳圈时不可动
             return;
-        if (Main.GameFinish || null == navMeshAgent)
+        if (Main.GameFinish || null == MoveControler)
         {
             if (Main.GameFinish && Main.IsWin == true)
             {
@@ -69,42 +86,52 @@ public class Lead : MonoBehaviour
             //{
             //    //navMeshAgent.SetDestination(hit.point); //AI组件，设置目的地/终点
             //}
-            if(hit.collider)
+            if (hit.collider)
             {
                 clickName = hit.collider.name;
                 zb = DataManagement.GetInstance().SelectZombie;
-                navMeshAgent.isStopped = false;
+                //navMeshAgent.isStopped = false;
                 curZb = hit.collider.transform.GetComponent<Zombie>();
-                
+
                 if (curZb != null && null != zb)
                 {
-                    navMeshAgent.SetDestination(zb.transform.position);
+                    GridLO EndLo = MapManager.Ins.ResolveRoleStandGridItem(zb.transform);
+                    Main.LeaderMove(EndLo);
                 }
-                else
+                else if(clickName == "bucket")
                 {
-                    if (PassLv1 == false && (hit.point.z >= -17f || hit.point.x> -13.3f)) return;//第一个僵尸没打死不可前往流程2  
-                    if (PassLv2 == false && (hit.point.x > -0.7f)) return;//第一个僵尸没打死不可前往流程2   
-                    navMeshAgent.SetDestination(hit.point);
-                    DataManagement.GetInstance().SelectZombie = null;
+                    GridLO EndLo = MapManager.Ins.ResolveRoleStandGridItem(BucketPoint);
+                    Main.LeaderMove(EndLo);
                 }
-                animator.SetBool("walk", true);
+                else 
+                {
+                    //if (PassLv1 == false && (hit.point.z >= -17f || hit.point.x > -13.3f)) return;//第一个僵尸没打死不可前往流程2  
+                    //if (PassLv2 == false && (hit.point.x > -0.7f)) return;//第一个僵尸没打死不可前往流程2   
+                    //navMeshAgent.SetDestination(hit.point);
+                    //DataManagement.GetInstance().SelectZombie = null;
+                }
             }
         }
 
-        if (Lifebuoy.activeSelf==false && clickName == "bucket" && navMeshAgent.remainingDistance < 5f)//拿枪
+        if (Lifebuoy.activeSelf == false && clickName == "bucket")//拿枪
         {
-            Main.onArrowEnd();
-            setFire = false;
+            DataManagement.GetInstance().SelectZombie = null;
+            float dis = Vector3.Distance(BucketPoint.position, transform.position);
+            if(dis < 5f)
+            {
+                Main.onArrowEnd();
+                setFire = false;
+            }
         }
 
         if (Main.GameFinish == false)//救生艇
         {
             float dis = Vector3.Distance(Ferry.position, transform.position);
-            if(dis <= 10f)
+            if (dis <= 10f)
             {
-                navMeshAgent.isStopped = true;
-                navMeshAgent.updatePosition = false;
-                animator.SetBool("walk", false);
+                //navMeshAgent.isStopped = true;
+                //navMeshAgent.updatePosition = false;
+                PlayIdle();
                 animator.Play("GunIdle", 0, 0.0f);
 
                 Main.WinGame();
@@ -113,12 +140,13 @@ public class Lead : MonoBehaviour
         }
 
         //if (null != zb && !navMeshAgent.pathPending)
-        if (null != zb && navMeshAgent.remainingDistance>= 0.2f)
+        if (null != zb)
         {
+            float dis = Vector3.Distance(zb.transform.position, transform.position);
             switch (lState)
             {
                 case LeadState.Melee:
-                    if (navMeshAgent.remainingDistance < 6f && TrowLifebuoy == false)
+                    if (dis < 6f && TrowLifebuoy == false)
                     {
                         TrowLifebuoy = true;
                         InTrowLifebuoy = true;
@@ -127,9 +155,8 @@ public class Lead : MonoBehaviour
                     break;
                 case LeadState.shot:
                     if (zb == null || zb.IsDead || !ShotingFinish || !DataManagement.GetInstance().SelectZombie) break;//套泳圈离枪太近bug 
-                    if (navMeshAgent.remainingDistance < 12f)
+                    if (dis < 12f)
                     {
-                        navMeshAgent.isStopped = true;
                         if (!setFire)
                         {
                             setFire = true;
@@ -141,9 +168,9 @@ public class Lead : MonoBehaviour
         }
         else
         {
-            if (navMeshAgent.remainingDistance < 0.2f && !Main.GameFinish)
+            if (Main.GameFinish)
             {
-                animator.SetBool("walk", false);
+                PlayIdle();
             }
         }
     }
@@ -152,7 +179,7 @@ public class Lead : MonoBehaviour
     {
         Lifebuoy.SetActive(false);
         setFire = true;
-        navMeshAgent.isStopped = true;
+        MoveControler.StopMove(false);
         //animator.SetBool("Gun", true);
         animator.SetBool("die", true);
     }
@@ -161,28 +188,27 @@ public class Lead : MonoBehaviour
     private bool InTrowLifebuoy = false;
     IEnumerator LifebuoyAnim()
     {
+        MoveControler.StopMove(false);
+
         animator.SetBool("throw", true);
         Lifebuoy.gameObject.SetActive(false);
         LifebuoyAtk.gameObject.SetActive(true);
-        navMeshAgent.isStopped = true;
 
         this.transform.LookAt(zb.transform);
-        navMeshAgent.updateRotation = false;
         for (float timer = 1f; timer >= 0; timer -= Time.deltaTime)
         {
             yield return 0;
         }
-        navMeshAgent.updateRotation = true;
         Lifebuoy.SetActive(false);
         lState = LeadState.shot;
         //DataManagement.GetInstance().SetLifebuoy();
         Main.onFingerEnd();
         //Main.NpcUp();
 
-        animator.SetBool("walk", false);
-        navMeshAgent.isStopped = true;
+        PlayIdle();
         InTrowLifebuoy = false;
         animator.SetBool("throw", false);
+        MoveControler.StopMove();
         //TrowLifebuoy = false;
     }
 
@@ -193,9 +219,8 @@ public class Lead : MonoBehaviour
     {
         //animator.SetBool("throw", true);
         animator.Play("GunShot", 0, 0.0f);
-        animator.SetBool("walk", false);
-        navMeshAgent.updateRotation = false;
-        navMeshAgent.isStopped = true;
+        PlayIdle();
+        MoveControler.StopMove(false);
 
         ShotingFinish = false;
         //朝向
@@ -214,9 +239,9 @@ public class Lead : MonoBehaviour
         //    yield return 0;
         //}
         setFire = false;
-        navMeshAgent.updateRotation = true;
 
         ShotingFinish = true;
+        MoveControler.StopMove();
     }
 
     private bool IsEquipGun = false;
@@ -233,5 +258,15 @@ public class Lead : MonoBehaviour
     {
         LifebuoyAtk.gameObject.SetActive(false);
         DataManagement.GetInstance().SetLifebuoy();
+    }
+
+    public void PlayMove()
+    {
+        animator.SetBool("walk", true);
+    }
+
+    public void PlayIdle()
+    {
+        animator.SetBool("walk", false);
     }
 }

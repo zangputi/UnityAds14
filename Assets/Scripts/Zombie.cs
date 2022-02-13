@@ -13,21 +13,45 @@ public class Zombie : MonoBehaviour
     public GameObject ShotStart;
     public Main Main;
 
-    private NavMeshAgent navMeshAgent;
+    //private NavMeshAgent navMeshAgent;
+    private D3ObjMove MoveControler;
     private Animator animator;
-    
 
+    private void Awake()
+    {
+        MoveControler = transform.GetComponent<D3ObjMove>();
+        MoveControler.MoveFunc = new D3ObjMove.ActFunc(PlayMove);
+        MoveControler.IdleFunc = new D3ObjMove.ActFunc(PlayIdle);
+    }
+
+    List<Transform> MoveNodes;
+    public void StartMove(List<Transform> mtfs)
+    {
+        MoveNodes = mtfs;
+        MoveControler.MoveTo(mtfs);
+    }
+
+    public void PlayMove()
+    {
+        animator.SetBool("walk", true);
+    }
+
+    public void PlayIdle()
+    {
+        animator.SetBool("walk", false);
+    }
 
     /// <summary>
     /// 初始化函数
     /// </summary>
     void Start()
     {
-        navMeshAgent = GetComponent<NavMeshAgent>();//GetComponent<NavMeshAgent>(); //获取自身AI组件
+        //navMeshAgent = GetComponent<NavMeshAgent>();//GetComponent<NavMeshAgent>(); //获取自身AI组件
         animator = GetComponent<Animator>();     //动画组件
     }
 
-
+    private float ResetFindPathTime = 300f;
+    private float ResetFindPathTimeVal = 0f;
     /// <summary>
     /// 每帧刷新
     /// </summary>
@@ -63,22 +87,29 @@ public class Zombie : MonoBehaviour
             }
         }
 
-        if (null == navMeshAgent || null == Target || IsDead==true)
+        if (null == MoveControler || null == Target || IsDead == true)
             return;
-        navMeshAgent.SetDestination(Target.position);
-        if (!navMeshAgent.pathPending && navMeshAgent.remainingDistance < 4.1f &&
+        ResetFindPathTimeVal -= 33.33f;
+        if (ResetFindPathTimeVal > 0) return;
+        ResetFindPathTimeVal = ResetFindPathTime;
+        GridLO lo = MapManager.Ins.ResolveRoleStandGridItem(Target.transform);//朝着目标移动
+        Main.ZBMove(transform, lo);
+        //navMeshAgent.SetDestination(Target.position);
+        float dis = Vector3.Distance(Target.transform.position, transform.position);
+        if (dis < 4.1f &&
             (Lifebuoy == null || (Lifebuoy != null && Lifebuoy.activeSelf == false))) //当前位置 与终点 的  剩余距离<0.5f
         {
-            animator.SetBool("walk", false);
+            PlayIdle();
             animator.SetBool("atk", true);
-            if(Lifebuoy==null || (Lifebuoy!=null && Lifebuoy.activeSelf==false))
+            Target = null;
+            if (Lifebuoy == null || (Lifebuoy != null && Lifebuoy.activeSelf == false))
             {
                 Main.FailGame();
             }
         }
         else
         {
-            animator.SetBool("walk", true);
+            PlayMove();
             animator.SetBool("atk", false);
         }
     }
@@ -118,8 +149,8 @@ public class Zombie : MonoBehaviour
         Lifebuoy.SetActive(set);
         Hand.SetActive(false);
         Target = null;
-        animator.SetBool("walk", false);
-        navMeshAgent.isStopped = true;
+        PlayIdle();
+        MoveControler.StopMove();
     }
 
     public void SetShotStart(bool set)
@@ -130,9 +161,9 @@ public class Zombie : MonoBehaviour
     public bool IsDead = false;
     IEnumerator FireAnim()
     {
-        if(navMeshAgent!=null)
+        if (MoveControler != null)
         {
-            navMeshAgent.isStopped = true;
+            MoveControler.StopMove();
         }
         animator.SetBool("die", true);
         for (float timer = 2; timer >= 0; timer -= Time.deltaTime)

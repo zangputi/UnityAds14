@@ -33,6 +33,13 @@ public class Main : MonoBehaviour
 
     public float ScaleP = 2.0f;
     public Camera UICamera;
+
+    private static Main _ins;
+    public static Main Ins { get => _ins; }
+    Main()
+    {
+        _ins = this;
+    }
     void Start()
     {
         //finger.SetActive(true);
@@ -204,4 +211,69 @@ public class Main : MonoBehaviour
         ht.PlayHarm();
         ht.transform.localPosition = pos;
     }
+
+    public void ZBMove(Zombie zb, GridLO endLO)
+    {
+
+    }
+
+    public void NpcMove(Npc npc, GridLO endLO)
+    {
+
+    }
+
+    public Transform MapContent;
+    public void LeaderMove(GridLO endLo)
+    {
+        //Vector3 leaderPos = MapContent.InverseTransformPoint(Lead.transform.position);
+        //float gridSize = MapManager.Ins.GridSize;
+        //float minX = MapManager.Ins.MapMinX;
+        //float minY = MapManager.Ins.MapMinY;
+
+        //float rolePosX = leaderPos.x - minX;
+        //float rolePosY = leaderPos.y - minY;
+        //int roleX = Mathf.CeilToInt(rolePosX / gridSize); //角色所在列索引
+        //int roleY = Mathf.CeilToInt(rolePosY / gridSize); //角色所在列索引
+        //int idx = roleX + roleY * MapManager.Ins.XMax;
+        //GameObject obj = MapManager.Ins.Creater.GridItems[idx];
+        //GridLO StartLo = obj.transform.GetComponent<GridClicker>().lo;
+        GridLO StartLo = MapManager.Ins.ResolveRoleStandGridItem(Lead.transform);
+        List<Transform> lineTfs = MapManager.Ins.FindPath8(StartLo, endLo);
+        if (lineTfs.Count == 0) return;
+        lead1.StartMove(lineTfs);
+        //for(int k=0; k< lineTfs.Count; k++)
+        //{
+        //    Transform tf = lineTfs[k];
+        //    tf.GetComponent<MeshRenderer>().material.color = Color.green;
+        //}
+    }
+    public void ZBMove(Transform tf, GridLO endLo)
+    {
+        GridLO StartLo = MapManager.Ins.ResolveRoleStandGridItem(tf);
+        List<Transform> lineTfs = MapManager.Ins.FindPath8(StartLo, endLo);
+        if (lineTfs.Count == 0) return;
+        Zombie zb = tf.GetComponent<Zombie>();
+        zb.StartMove(lineTfs);
+    }
+
+
+    public void NpcMove(Transform tf, GridLO endLo, int npcId, Transform target)
+    {
+        Vector3 pos = new Vector3();
+        if(npcId == 1)
+        {
+            pos = new Vector3(1.0f, 0.0f, 0.0f);
+        }
+        else
+        {
+            pos = new Vector3(-1.0f, 0.0f, 0.0f);
+        }
+        pos = target.TransformPoint(pos);
+        GridLO StartLo = MapManager.Ins.ResolveRoleStandGridItem1(pos);
+        List<Transform> lineTfs = MapManager.Ins.FindPath8(StartLo, endLo);
+        if (lineTfs.Count == 0) return;
+        Npc npc = tf.GetComponent<Npc>();
+        npc.StartMove(lineTfs);
+    }
+
 }
