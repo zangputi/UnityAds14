@@ -125,8 +125,9 @@ public class Zombie : MonoBehaviour
         StartCoroutine(FireAnim());
 
         Transform hurtPos = transform.Find("HurtPos");
-        Vector3 vec3 = Main.UICamera.WorldToScreenPoint(hurtPos.position);
+        Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(Main.UICamera, transform.position);
         Vector2 lp = new Vector2();
+        vec3.z = 0.0f;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(UIRoot, vec3, Main.UICamera, out lp);
         if(transform.name == "Zombie1" || transform.name == "Zombie2")
         {

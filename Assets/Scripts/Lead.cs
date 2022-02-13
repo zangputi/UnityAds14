@@ -24,7 +24,15 @@ public class Lead : MonoBehaviour
 
     public Transform Gun;
     public Transform BucketPoint;
+    public Transform BoatPoint;
     private D3ObjMove MoveControler;
+
+    public Transform Npc1;
+    public Transform Npc2;
+    public Zombie Z2;
+    public Zombie Z3;
+    public Zombie Z4;
+    public Zombie Z5;
     public enum LeadState
     {
         Melee,
@@ -117,25 +125,32 @@ public class Lead : MonoBehaviour
         {
             DataManagement.GetInstance().SelectZombie = null;
             float dis = Vector3.Distance(BucketPoint.position, transform.position);
-            if(dis < 5f)
+            if(dis < 1f)
             {
                 Main.onArrowEnd();
                 setFire = false;
             }
         }
 
-        if (Main.GameFinish == false)//救生艇
+        if (Main.GameFinish == false && clickName== "ferry")//救生艇
         {
-            float dis = Vector3.Distance(Ferry.position, transform.position);
-            if (dis <= 10f)
+            float dis = Vector3.Distance(BoatPoint.position, transform.position);
+            //float dis = Vector3.Distance(Ferry.position, transform.position);
+            if (dis <= 5f)
             {
                 //navMeshAgent.isStopped = true;
                 //navMeshAgent.updatePosition = false;
                 PlayIdle();
                 animator.Play("GunIdle", 0, 0.0f);
+                MoveControler.StopMove();
 
                 Main.WinGame();
                 setFire = false;
+            }
+            else
+            {
+                GridLO EndLo = MapManager.Ins.ResolveRoleStandGridItem(BoatPoint);
+                Main.LeaderMove(EndLo);
             }
         }
 
@@ -242,6 +257,11 @@ public class Lead : MonoBehaviour
 
         ShotingFinish = true;
         MoveControler.StopMove();
+
+        Z2.Target = Npc1;
+        Z3.Target = Npc2;
+        Z4.Target = transform;
+        Z5.Target = transform;
     }
 
     private bool IsEquipGun = false;

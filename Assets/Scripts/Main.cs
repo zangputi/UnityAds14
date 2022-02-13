@@ -65,7 +65,8 @@ public class Main : MonoBehaviour
             ScaleP = 1.0f;
             H.gameObject.SetActive(true);
             S.gameObject.SetActive(false);
-            UICamera.orthographicSize = Camera.main.orthographicSize = 9.41f;
+            //UICamera.orthographicSize = Camera.main.orthographicSize = 9.41f;
+            Camera.main.orthographicSize = 13f;
         }
         else
         {
@@ -73,6 +74,7 @@ public class Main : MonoBehaviour
             H.gameObject.SetActive(false);
             S.gameObject.SetActive(true);
             UICamera.orthographicSize = Camera.main.orthographicSize = 17.01f;
+            //UICamera.orthographicSize = Camera.main.orthographicSize = 18.06f;
         }
     }
 
