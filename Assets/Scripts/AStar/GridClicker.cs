@@ -41,12 +41,15 @@ public class GridClicker : MonoBehaviour
     private static bool GridMapMouseD;
     public static bool  CurMouseEventIsWall;
     public static GridClicker StartClickGrid;
+    public static float ClickDtT = 300.0f;
+    public static float ClickDt = 0;
     public void OnMouseDown()
     {
         GridClicker.StartClickGrid = this;
         GridClicker.CurMouseEventIsWall = !lo.IsWall;
-        if (IsPlaying)
+        if (IsPlaying && ClickDt <= 0f)
         {
+            ClickDt = ClickDtT;
             DataManagement.GetInstance().SelectZombie = null;
             Main.Ins.LeaderMove(lo);
             return;
@@ -73,7 +76,7 @@ public class GridClicker : MonoBehaviour
     {
     }
 
-    public bool IsPlaying = true;
+    public static bool IsPlaying = true;
     private void OnMouseOver()
     {
         if(!GridClicker.GridMapMouseD || IsPlaying)

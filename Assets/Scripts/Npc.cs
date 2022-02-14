@@ -47,7 +47,7 @@ public class Npc : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    private float ResetFindPathTime = 300f;
+    private float ResetFindPathTime = 1500f;
     private float ResetFindPathTimeVal = 0f;
     public int npcId = 1;
     void Update()

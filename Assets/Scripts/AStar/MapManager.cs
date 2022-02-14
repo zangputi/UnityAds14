@@ -138,9 +138,13 @@ public class MapManager : MonoBehaviour
 
         float rolePosX = pos.x - minX;
         float rolePosY = pos.y - minY;
-        int roleX = Mathf.CeilToInt(rolePosX / gridSize); //角色所在列索引
-        int roleY = Mathf.CeilToInt(rolePosY / gridSize); //角色所在列索引
+        int roleX = Mathf.CeilToInt(rolePosX / gridSize) - 1; //角色所在列索引
+        int roleY = Mathf.CeilToInt(rolePosY / gridSize) - 1; //角色所在列索引
         int idx = roleX + roleY * MapManager.Ins.XMax;
+        if(idx<0 || MapManager.Ins.Creater.GridItems.Count < idx)
+        {
+            return null;
+        }
         GameObject obj = MapManager.Ins.Creater.GridItems[idx];
         GridLO StartLo = obj.transform.GetComponent<GridClicker>().lo;
         return StartLo;

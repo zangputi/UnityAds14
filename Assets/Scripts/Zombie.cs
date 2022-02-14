@@ -50,7 +50,7 @@ public class Zombie : MonoBehaviour
         animator = GetComponent<Animator>();     //动画组件
     }
 
-    private float ResetFindPathTime = 300f;
+    private float ResetFindPathTime = 1500f;
     private float ResetFindPathTimeVal = 0f;
     /// <summary>
     /// 每帧刷新
@@ -125,7 +125,9 @@ public class Zombie : MonoBehaviour
         StartCoroutine(FireAnim());
 
         Transform hurtPos = transform.Find("HurtPos");
-        Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(Main.UICamera, transform.position);
+        Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(Main.UICamera, Main.Lead.transform.position);
+        vec3.x -= Screen.width * 0.5f;
+        //vec3.y -= Screen.height * 0.5f;
         Vector2 lp = new Vector2();
         vec3.z = 0.0f;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(UIRoot, vec3, Main.UICamera, out lp);

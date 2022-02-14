@@ -58,6 +58,8 @@ public class Lead : MonoBehaviour
     {
         MoveNodes = mtfs;
         MoveControler.MoveTo(mtfs);
+        if(mtfs.Count > 0)
+            Main.Ins.ShowTiShi(mtfs[mtfs.Count-1].position);
         //能到这里说明点的不是僵尸
     }
 
@@ -65,22 +67,23 @@ public class Lead : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        GridClicker.ClickDt -= 33.33f;
         if (fire.activeSelf || InTrowLifebuoy)//在开火或者扔泳圈时不可动
             return;
         if (Main.GameFinish || null == MoveControler)
         {
             if (Main.GameFinish && Main.IsWin == true)
             {
-                if (Input.GetMouseButton(0))
-                {
-                    object ray = Camera.main.ScreenPointToRay(Input.mousePosition); //屏幕坐标转射线
-                    RaycastHit hit;                                                     //射线投射碰撞
-                    bool isHit = Physics.Raycast((Ray)ray, out hit);             //射线投射(射线，结构体信息) ；返回bool 值 是否检测到碰撞
-                    if (hit.collider && hit.collider.name == "ferry")
-                    {
-                        Main.ShowResult();
-                    }
-                }
+                //if (Input.GetMouseButton(0))
+                //{
+                //    object ray = Camera.main.ScreenPointToRay(Input.mousePosition); //屏幕坐标转射线
+                //    RaycastHit hit;                                                     //射线投射碰撞
+                //    bool isHit = Physics.Raycast((Ray)ray, out hit);             //射线投射(射线，结构体信息) ；返回bool 值 是否检测到碰撞
+                //    if (hit.collider && hit.collider.name == "ferry")
+                //    {
+                //        Main.ShowResult();
+                //    }
+                //}
             }
             return;
         }
@@ -132,10 +135,9 @@ public class Lead : MonoBehaviour
             }
         }
 
-        if (Main.GameFinish == false && clickName== "ferry")//救生艇
+        if (Main.GameFinish == false)//救生艇
         {
             float dis = Vector3.Distance(BoatPoint.position, transform.position);
-            //float dis = Vector3.Distance(Ferry.position, transform.position);
             if (dis <= 5f)
             {
                 //navMeshAgent.isStopped = true;
@@ -145,9 +147,10 @@ public class Lead : MonoBehaviour
                 MoveControler.StopMove();
 
                 Main.WinGame();
+                Main.ShowResult();
                 setFire = false;
             }
-            else
+            else if (clickName == "ferry")
             {
                 GridLO EndLo = MapManager.Ins.ResolveRoleStandGridItem(BoatPoint);
                 Main.LeaderMove(EndLo);
@@ -232,6 +235,7 @@ public class Lead : MonoBehaviour
     public bool PassLv2 = false;
     IEnumerator FireAnim()
     {
+        Debug.Log("FireAnim");
         //animator.SetBool("throw", true);
         animator.Play("GunShot", 0, 0.0f);
         PlayIdle();
@@ -256,7 +260,6 @@ public class Lead : MonoBehaviour
         setFire = false;
 
         ShotingFinish = true;
-        MoveControler.StopMove();
 
         Z2.Target = Npc1;
         Z3.Target = Npc2;
@@ -282,11 +285,13 @@ public class Lead : MonoBehaviour
 
     public void PlayMove()
     {
+        Debug.Log("PlayMove");
         animator.SetBool("walk", true);
     }
 
     public void PlayIdle()
     {
+        Debug.Log("PlayIdle");
         animator.SetBool("walk", false);
     }
 }

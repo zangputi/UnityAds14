@@ -73,7 +73,7 @@ public class Main : MonoBehaviour
             ScaleP = 0.5f;
             H.gameObject.SetActive(false);
             S.gameObject.SetActive(true);
-            UICamera.orthographicSize = Camera.main.orthographicSize = 17.01f;
+            UICamera.orthographicSize = Camera.main.orthographicSize = 28.5f;
             //UICamera.orthographicSize = Camera.main.orthographicSize = 18.06f;
         }
     }
@@ -224,9 +224,30 @@ public class Main : MonoBehaviour
 
     }
 
+    public Transform TiSi;
+    public void ShowTiShi(Vector3 clickPos)
+    {
+        if(TiSi)
+        {
+            ReplayPS(TiSi.Find("1"));
+            ReplayPS(TiSi.Find("2"));
+            ReplayPS(TiSi.Find("3"));
+            ReplayPS(TiSi.Find("4"));
+            TiSi.position = new Vector3(clickPos.x, TiSi.position.y, clickPos.z);
+        }
+    }
+
+    private void ReplayPS(Transform tf)
+    {
+        ParticleSystem ps = tf.GetComponent<ParticleSystem>();
+        ps.Simulate(0.0f);
+        ps.Play();
+    }
+
     public Transform MapContent;
     public void LeaderMove(GridLO endLo)
     {
+        if (GameFinish) return;
         //Vector3 leaderPos = MapContent.InverseTransformPoint(Lead.transform.position);
         //float gridSize = MapManager.Ins.GridSize;
         //float minX = MapManager.Ins.MapMinX;

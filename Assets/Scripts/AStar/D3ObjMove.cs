@@ -76,7 +76,7 @@ public class D3ObjMove : MonoBehaviour
 
 
     private bool Moving = false;
-    List<Transform> MoveNodes;
+    public List<Transform> MoveNodes;
     public void MoveTo(List<Transform> val)
     {
         RealPos.x = transform.position.x;

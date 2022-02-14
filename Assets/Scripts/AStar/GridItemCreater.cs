@@ -65,7 +65,8 @@ public class GridItemCreater : MonoBehaviour
 
         GridItems = new List<GameObject>();
         InitGrid();
-        MapManager.Ins.Init();
+        if(GridClicker.IsPlaying)
+            MapManager.Ins.Init();
     }
 
     // Update is called once per frame
@@ -110,10 +111,20 @@ public class GridItemCreater : MonoBehaviour
                 GridClicker lo = obj.transform.GetComponent<GridClicker>();
                 if(recoder.GridLOList.Count >= idx)
                 {
-                    lo.lo.IsWall = recoder.GridLOList[idx - 1].IsWall;
-                    lo.lo.X = recoder.GridLOList[idx - 1].X;
-                    lo.lo.Y = recoder.GridLOList[idx - 1].Y;
+                    lo.lo = recoder.GridLOList[idx - 1];
+                    //lo.lo.IsWall = recoder.GridLOList[idx - 1].IsWall;
+                    //lo.lo.X = recoder.GridLOList[idx - 1].X;
+                    //lo.lo.Y = recoder.GridLOList[idx - 1].Y;
                     lo.Draw();
+                    //recoder.GridLOList[idx - 1] = lo.lo;
+
+                    //画
+                    //lo.lo = recoder.GridLOList[idx - 1];
+                    ////lo.lo.IsWall = recoder.GridLOList[idx - 1].IsWall;
+                    ////lo.lo.X = recoder.GridLOList[idx - 1].X;
+                    ////lo.lo.Y = recoder.GridLOList[idx - 1].Y;
+                    //lo.Draw();
+                    ////recoder.GridLOList[idx - 1] = lo.lo;
                 }
                 else
                 {

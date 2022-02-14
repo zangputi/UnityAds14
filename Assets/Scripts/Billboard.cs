@@ -3,17 +3,15 @@ using System.Collections;
 
 public class Billboard : MonoBehaviour
 {
-    // Use this for initialization
-    void Start()
+    // Start is called before the first frame update
+    private void Start()
     {
-        cameraToLookAt = Camera.main;
     }
-    public Camera cameraToLookAt;
-    void Update()
+    public Transform target;
+    // Update is called once per frame
+    private void Update()
     {
-        Vector3 v = cameraToLookAt.transform.position - transform.position;
-        v.x = v.z = 0.0f;
-        transform.LookAt(cameraToLookAt.transform.position - v);
+        this.transform.LookAt(target.transform);
     }
 
 }
