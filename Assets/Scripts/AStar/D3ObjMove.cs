@@ -72,8 +72,27 @@ public class D3ObjMove : MonoBehaviour
                 }
             }
         }
-    }
 
+        //if(InRoting)
+        //{
+        //    RotDT -= dt;
+        //    if(RotDT <= 0)
+        //    {
+        //        InRoting = false;
+        //        EV3.x = transform.eulerAngles.x;
+        //        EV3.y = SourceE + ChangeE;
+        //        EV3.z = transform.eulerAngles.z;
+        //        transform.eulerAngles = EV3;
+        //        return;
+        //    }
+        //    float per = 1f - RotDT / RotT;
+        //    EV3.x = transform.eulerAngles.x;
+        //    EV3.y = SourceE + per * ChangeE;
+        //    EV3.z = transform.eulerAngles.z;
+        //    transform.eulerAngles = EV3;
+        //}
+    }
+    private Vector3 EV3 = new Vector3();
 
     private bool Moving = false;
     public List<Transform> MoveNodes;
@@ -102,6 +121,12 @@ public class D3ObjMove : MonoBehaviour
             IdleFunc.Invoke();
     }
 
+    private float RotT = 1000f;
+    private float RotDT = 0.0f;
+    private bool InRoting = false;
+    private float SourceE = 0f;
+    private float ChangeE = 0f; 
+
     private Vector3 Dir;
     private void NextNode()
     {
@@ -116,7 +141,11 @@ public class D3ObjMove : MonoBehaviour
         Dir.Normalize();
         MoveNodes.RemoveAt(0);
 
+        //RotDT = RotT;
+        //InRoting = true;
+        //SourceE = transform.eulerAngles.y;
         float y = GetAngle(transform.position, CurTF.position);
+        //ChangeE = y - SourceE;
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, y, transform.eulerAngles.z);
     }
 
