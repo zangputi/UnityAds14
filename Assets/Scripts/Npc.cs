@@ -16,6 +16,8 @@ public class Npc : MonoBehaviour
     private bool IsStandUp = false;
     private D3ObjMove MoveControler;
 
+    public Transform HelpUI;
+
 
     private void Awake()
     {
@@ -50,8 +52,19 @@ public class Npc : MonoBehaviour
     private float ResetFindPathTime = 1500f;
     private float ResetFindPathTimeVal = 0f;
     public int npcId = 1;
+    public RectTransform D3UIRoot;
+    public Transform Help3DPosNode;
     void Update()
     {
+        if (HelpUI != null && D3UIRoot != null && HelpUI.gameObject.activeSelf)
+        {
+            Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(Camera.main, Help3DPosNode.transform.position);
+            Vector2 lp = new Vector2();
+            //vec3.z = 0.0f;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(D3UIRoot, vec3, Camera.main, out lp);
+            HelpUI.transform.localPosition = lp;
+        }
+        
         if (RoundZB2.IsDead == false) return;
 
         if(RoundZB1 && RoundZB2 && RoundZB1.IsDead && RoundZB2.IsDead && IsStandUp == false)
@@ -100,6 +113,7 @@ public class Npc : MonoBehaviour
             return;
         IsStandUp = true;
         StartCoroutine(StandUp());
+        HelpUI.gameObject.SetActive(false);
     }
 
     IEnumerator StandUp()

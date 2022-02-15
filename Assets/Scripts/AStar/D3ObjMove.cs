@@ -73,24 +73,24 @@ public class D3ObjMove : MonoBehaviour
             }
         }
 
-        //if(InRoting)
-        //{
-        //    RotDT -= dt;
-        //    if(RotDT <= 0)
-        //    {
-        //        InRoting = false;
-        //        EV3.x = transform.eulerAngles.x;
-        //        EV3.y = SourceE + ChangeE;
-        //        EV3.z = transform.eulerAngles.z;
-        //        transform.eulerAngles = EV3;
-        //        return;
-        //    }
-        //    float per = 1f - RotDT / RotT;
-        //    EV3.x = transform.eulerAngles.x;
-        //    EV3.y = SourceE + per * ChangeE;
-        //    EV3.z = transform.eulerAngles.z;
-        //    transform.eulerAngles = EV3;
-        //}
+        if (InRoting)
+        {
+            RotDT -= dt;
+            if (RotDT <= 0)
+            {
+                InRoting = false;
+                EV3.x = transform.eulerAngles.x;
+                EV3.y = SourceE + ChangeE;
+                EV3.z = transform.eulerAngles.z;
+                transform.eulerAngles = EV3;
+                return;
+            }
+            float per = 1f - RotDT / RotT;
+            EV3.x = transform.eulerAngles.x;
+            EV3.y = SourceE + per * ChangeE;
+            EV3.z = transform.eulerAngles.z;
+            transform.eulerAngles = EV3;
+        }
     }
     private Vector3 EV3 = new Vector3();
 
@@ -113,6 +113,7 @@ public class D3ObjMove : MonoBehaviour
     public void StopMove(bool playAni=true)
     {
         CurTF = null;
+        InRoting = false;
         Moving = false;
         if(MoveNodes!=null)
             MoveNodes.Clear();
@@ -121,7 +122,7 @@ public class D3ObjMove : MonoBehaviour
             IdleFunc.Invoke();
     }
 
-    private float RotT = 1000f;
+    private float RotT = 200f;
     private float RotDT = 0.0f;
     private bool InRoting = false;
     private float SourceE = 0f;
@@ -141,12 +142,34 @@ public class D3ObjMove : MonoBehaviour
         Dir.Normalize();
         MoveNodes.RemoveAt(0);
 
-        //RotDT = RotT;
-        //InRoting = true;
-        //SourceE = transform.eulerAngles.y;
-        float y = GetAngle(transform.position, CurTF.position);
-        //ChangeE = y - SourceE;
-        transform.eulerAngles = new Vector3(transform.eulerAngles.x, y, transform.eulerAngles.z);
+        RotDT = RotT;
+        InRoting = true;
+        SourceE = transform.eulerAngles.y;
+        //float y = GetAngle(transform.position, CurTF.position);
+
+        Vector2 dir = new Vector2(CurTF.position.x - transform.position.x, CurTF.position.z - transform.position.z);
+        dir.Normalize();
+        float ang = Mathf.Acos(Vector2.Dot(Vector2.up, dir));
+        if (CurTF.position.x < transform.position.x)
+        {
+            ang = -ang;
+        }
+        ang = 180 / Mathf.PI * ang;
+        ChangeE = ang - SourceE;
+        ChangeE = ChangeE % 360f;
+        if (Mathf.Abs(ChangeE) > 180.0f)
+        {
+            if( ChangeE < 0)
+            {
+                ChangeE = 360f + ChangeE;
+            }
+            else
+            {
+                ChangeE = 360f - ChangeE;
+            }
+        }
+        //transform.eulerAngles = new Vector3(transform.eulerAngles.x, ang, transform.eulerAngles.z);
+
     }
 
 

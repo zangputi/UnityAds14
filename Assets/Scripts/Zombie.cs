@@ -11,11 +11,13 @@ public class Zombie : MonoBehaviour
     public GameObject Lifebuoy;
     public GameObject Hand;
     public GameObject ShotStart;
+    public GameObject ShotStartUI;
     public Main Main;
 
     //private NavMeshAgent navMeshAgent;
     private D3ObjMove MoveControler;
     private Animator animator;
+    public Camera D3Camera;
 
     private void Awake()
     {
@@ -57,6 +59,20 @@ public class Zombie : MonoBehaviour
     /// </summary>
     void Update()
     {
+        if (Main.Ins.GameFinish) return;
+
+        if (ShotStartUI != null)
+        {
+            Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(Camera.main, ShotStart.transform.position);
+            //vec3.x -= Screen.width * 0.5f;
+            //vec3.y -= Screen.height * 0.5f;
+            Vector2 lp = new Vector2();
+            //vec3.z = 0.0f;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(D3UIRoot, vec3, Camera.main, out lp);
+            ShotStartUI.transform.localPosition = lp;
+        }
+        
+
         if (Input.GetMouseButton(0)) //左键
         {
             object ray = Camera.main.ScreenPointToRay(Input.mousePosition); //屏幕坐标转射线
@@ -115,23 +131,46 @@ public class Zombie : MonoBehaviour
     }
 
     public RectTransform UIRoot;
+    public RectTransform D3UIRoot;
     internal void OnDie()
     {
         if (IsDead) return;
         IsDead = true;
         ShotStart.SetActive(false);
+        if(ShotStartUI)
+        {
+            ShotStartUI.SetActive(false);
+        }
 
         if (Lifebuoy != null) Lifebuoy.gameObject.SetActive(false);
         StartCoroutine(FireAnim());
 
+        //Transform hurtPos = transform.Find("HurtPos");
+        //Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(Main.UICamera, Main.Lead.transform.position);
+        //vec3.x -= Screen.width * 0.5f;
+        ////vec3.y -= Screen.height * 0.5f;
+        //Vector2 lp = new Vector2();
+        //vec3.z = 0.0f;
+        //RectTransformUtility.ScreenPointToLocalPointInRectangle(UIRoot, vec3, Main.UICamera, out lp);
+        //if(transform.name == "Zombie1" || transform.name == "Zombie2")
+        //{
+        //    Main.ShowHurtTxt(1, lp);
+        //}
+        //else
+        //{
+        //    Main.ShowHurtTxt(2, lp);
+        //    Main.Lead.GetComponent<Lead>().PassLv2 = true;
+        //}
+
+
         Transform hurtPos = transform.Find("HurtPos");
-        Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(Main.UICamera, Main.Lead.transform.position);
-        vec3.x -= Screen.width * 0.5f;
+        Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(Camera.main, transform.position);
+        //vec3.x -= Screen.width * 0.5f;
         //vec3.y -= Screen.height * 0.5f;
         Vector2 lp = new Vector2();
         vec3.z = 0.0f;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(UIRoot, vec3, Main.UICamera, out lp);
-        if(transform.name == "Zombie1" || transform.name == "Zombie2")
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(D3UIRoot, vec3, Camera.main, out lp);
+        if (transform.name == "Zombie1" || transform.name == "Zombie2")
         {
             Main.ShowHurtTxt(1, lp);
         }
@@ -159,6 +198,10 @@ public class Zombie : MonoBehaviour
     public void SetShotStart(bool set)
     {
         ShotStart.SetActive(true);
+        if(ShotStartUI)
+        {
+            ShotStartUI.SetActive(true);
+        }
     }
 
     public bool IsDead = false;

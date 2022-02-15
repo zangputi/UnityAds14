@@ -24,6 +24,10 @@ public class Main : MonoBehaviour
     public Npc girl1;
 
     public Zombie zb1;
+    public Zombie zb2;
+    public Zombie zb3;
+    public Zombie zb4;
+    public Zombie zb5;
     public GameObject fail;
     public GameObject win;
 
@@ -159,6 +163,22 @@ public class Main : MonoBehaviour
             UI.gameObject.SetActive(false);
 
         BgM.gameObject.SetActive(false);
+
+        zb1.GetComponent<Animator>().speed = 0.0f;
+        zb1.transform.Find("IdleSound").gameObject.SetActive(false);
+        zb2.GetComponent<Animator>().speed = 0.0f;
+        zb2.transform.Find("IdleSound").gameObject.SetActive(false);
+        zb3.GetComponent<Animator>().speed = 0.0f;
+        zb3.transform.Find("IdleSound").gameObject.SetActive(false);
+        zb4.GetComponent<Animator>().speed = 0.0f;
+        zb4.transform.Find("IdleSound").gameObject.SetActive(false);
+        zb5.GetComponent<Animator>().speed = 0.0f;
+        zb5.transform.Find("IdleSound").gameObject.SetActive(false);
+
+        girl.GetComponent<Animator>().speed = 0.0f;
+        girl.transform.Find("HelpSound").gameObject.SetActive(false);
+        girl1.GetComponent<Animator>().speed = 0.0f;
+        girl1.transform.Find("HelpSound").gameObject.SetActive(false);
         //}
         //else
         //{
@@ -247,7 +267,7 @@ public class Main : MonoBehaviour
     public Transform MapContent;
     public void LeaderMove(GridLO endLo)
     {
-        if (GameFinish) return;
+        if (GameFinish || endLo==null) return;
         //Vector3 leaderPos = MapContent.InverseTransformPoint(Lead.transform.position);
         //float gridSize = MapManager.Ins.GridSize;
         //float minX = MapManager.Ins.MapMinX;

@@ -246,6 +246,10 @@ public class Lead : MonoBehaviour
         this.transform.LookAt(zb.transform);
         fire.SetActive(true);
         Main.ShotZombie();
+
+        float y = MoveControler.GetAngle(transform.position, DataManagement.GetInstance().SelectZombie.transform.position);
+        transform.eulerAngles = new Vector3(transform.eulerAngles.x, y, transform.eulerAngles.z);
+
         PassLv1 = true;
         //animator.Play("Throw", 0, 0.0f);
         for (float timer = 1; timer >= 0; timer -= Time.deltaTime)
@@ -262,9 +266,14 @@ public class Lead : MonoBehaviour
         ShotingFinish = true;
 
         Z2.Target = Npc1;
-        Z3.Target = Npc2;
         Z4.Target = transform;
         Z5.Target = transform;
+
+        for (float timer = 0.3f; timer >= 0; timer -= Time.deltaTime)
+        {
+            yield return 0;
+        }
+        Z3.Target = Npc2;
     }
 
     private bool IsEquipGun = false;

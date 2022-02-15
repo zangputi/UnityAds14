@@ -65,6 +65,7 @@ public class MapManager : MonoBehaviour
     public List<Transform> FindPath8(GridLO startGrid, GridLO endGrid)
     {
         List<Transform> ret = new List<Transform>();
+        if (startGrid == null) return ret;
 
         var startpoint = mapPoints[startGrid.X, startGrid.Y];
         var endPoint = mapPoints[endGrid.X, endGrid.Y];
@@ -123,6 +124,8 @@ public class MapManager : MonoBehaviour
         int roleX = Mathf.CeilToInt(rolePosX / gridSize); //角色所在列索引
         int roleY = Mathf.CeilToInt(rolePosY / gridSize); //角色所在列索引
         int idx = roleX + roleY * MapManager.Ins.XMax;
+        if (MapManager.Ins.Creater.GridItems.Count < idx)
+            return null;
         GameObject obj = MapManager.Ins.Creater.GridItems[idx];
         GridLO StartLo = obj.transform.GetComponent<GridClicker>().lo;
         return StartLo;

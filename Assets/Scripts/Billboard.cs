@@ -9,9 +9,12 @@ public class Billboard : MonoBehaviour
     }
     public Transform target;
     // Update is called once per frame
-    private void Update()
+    private void LateUpdate()
     {
-        this.transform.LookAt(target.transform);
+        //this.transform.LookAt(target.transform);
+        var lookPos = Camera.main.transform.position - transform.position;
+        lookPos.y = 0; 
+        transform.rotation = Quaternion.LookRotation(lookPos, Camera.main.transform.up) ;
     }
 
 }
