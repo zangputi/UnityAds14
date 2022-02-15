@@ -63,12 +63,12 @@ public class Zombie : MonoBehaviour
 
         if (ShotStartUI != null)
         {
-            Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(Camera.main, ShotStart.transform.position);
+            Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(D3Camera, ShotStart.transform.position);
             //vec3.x -= Screen.width * 0.5f;
             //vec3.y -= Screen.height * 0.5f;
             Vector2 lp = new Vector2();
             //vec3.z = 0.0f;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(D3UIRoot, vec3, Camera.main, out lp);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(D3UIRoot, vec3, D3Camera, out lp);
             ShotStartUI.transform.localPosition = lp;
         }
         

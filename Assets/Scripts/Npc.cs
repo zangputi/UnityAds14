@@ -54,14 +54,15 @@ public class Npc : MonoBehaviour
     public int npcId = 1;
     public RectTransform D3UIRoot;
     public Transform Help3DPosNode;
+    public Camera D3UICamera;
     void Update()
     {
         if (HelpUI != null && D3UIRoot != null && HelpUI.gameObject.activeSelf)
         {
-            Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(Camera.main, Help3DPosNode.transform.position);
+            Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(D3UICamera, Help3DPosNode.transform.position);
             Vector2 lp = new Vector2();
             //vec3.z = 0.0f;
-            RectTransformUtility.ScreenPointToLocalPointInRectangle(D3UIRoot, vec3, Camera.main, out lp);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(D3UIRoot, vec3, D3UICamera, out lp);
             HelpUI.transform.localPosition = lp;
         }
         
@@ -113,7 +114,8 @@ public class Npc : MonoBehaviour
             return;
         IsStandUp = true;
         StartCoroutine(StandUp());
-        HelpUI.gameObject.SetActive(false);
+        if(HelpUI!= null)
+            HelpUI.gameObject.SetActive(false);
     }
 
     IEnumerator StandUp()

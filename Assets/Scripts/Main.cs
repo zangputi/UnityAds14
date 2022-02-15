@@ -62,6 +62,7 @@ public class Main : MonoBehaviour
     public Transform H;
     public Transform S;
     public Transform BgM;
+    public Camera D3UICamera;
     public void ScreenAdapter()
     {
         if(Screen.width > Screen.height)
@@ -70,14 +71,14 @@ public class Main : MonoBehaviour
             H.gameObject.SetActive(true);
             S.gameObject.SetActive(false);
             //UICamera.orthographicSize = Camera.main.orthographicSize = 9.41f;
-            Camera.main.orthographicSize = 13f;
+            D3UICamera.orthographicSize = Camera.main.orthographicSize = 13f;
         }
         else
         {
             ScaleP = 0.5f;
             H.gameObject.SetActive(false);
             S.gameObject.SetActive(true);
-            UICamera.orthographicSize = Camera.main.orthographicSize = 28.5f;
+            D3UICamera.orthographicSize = UICamera.orthographicSize = Camera.main.orthographicSize = 28.5f;
             //UICamera.orthographicSize = Camera.main.orthographicSize = 18.06f;
         }
     }
