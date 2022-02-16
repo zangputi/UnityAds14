@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class Lead : MonoBehaviour
 {
@@ -48,6 +49,9 @@ public class Lead : MonoBehaviour
 
     private void Awake()
     {
+        GuideLv = 0;
+        Guide1.gameObject.SetActive(false);
+        Guide2.gameObject.SetActive(false);
         MoveControler = transform.GetComponent<D3ObjMove>();
         MoveControler.MoveFunc = new D3ObjMove.ActFunc(PlayMove);
         MoveControler.IdleFunc = new D3ObjMove.ActFunc(PlayIdle);
@@ -63,6 +67,16 @@ public class Lead : MonoBehaviour
         //能到这里说明点的不是僵尸
     }
 
+    public Transform GuideH;
+    public Transform Guide1;
+    public Transform Guide2;
+    public int GuideLv = 0;
+    public Camera D3Camera;
+    public Transform SceneGun;
+    public RectTransform D3UIRoot;
+
+    public Transform ShoStart;
+
     Zombie curZb;
     // Update is called once per frame
     void Update()
@@ -70,6 +84,37 @@ public class Lead : MonoBehaviour
         GridClicker.ClickDt -= 33.33f;
         if (fire.activeSelf || InTrowLifebuoy)//在开火或者扔泳圈时不可动
             return;
+
+        if(GuideLv == 1)
+        {
+            Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(D3Camera, SceneGun.position);
+            Vector2 lp = new Vector2();
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(Guide1.transform as RectTransform, vec3, D3Camera, out lp);
+
+            float GuideW = 50000.0f;
+            //Vector3 cInGuide = Guide1.transform.InverseTransformPoint(lp);
+            float x1 = lp.x / GuideW * -1.0f - 0.0025f;
+            float y1 = lp.y / GuideW * -1.0f;
+            Material mt = Guide1.GetComponent<Image>().material;
+            mt.SetFloat("_PosX_1", x1);
+            mt.SetFloat("_PosY_1", y1);
+        }
+        else if(GuideLv == 2)
+        {
+            Vector3 cInGuide = Guide2.transform.InverseTransformPoint(ShoStart.transform.position);
+            //Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(D3Camera, ShoStart.position);
+            //Vector2 lp = new Vector2();
+            //RectTransformUtility.ScreenPointToLocalPointInRectangle(Guide2.transform as RectTransform, vec3, D3Camera, out lp);
+
+            float GuideW = 50000.0f;
+            //Vector3 cInGuide = lp;//Guide2.transform.InverseTransformPoint(lp);
+            float x1 = cInGuide.x / GuideW * -1.0f;
+            float y1 = cInGuide.y / GuideW * -1.0f;
+            Material mt = Guide2.GetComponent<Image>().material;
+            mt.SetFloat("_PosX_1", x1);
+            mt.SetFloat("_PosY_1", y1);
+        }
+
         if (Main.GameFinish || null == MoveControler)
         {
             if (Main.GameFinish && Main.IsWin == true)
@@ -227,6 +272,8 @@ public class Lead : MonoBehaviour
         InTrowLifebuoy = false;
         animator.SetBool("throw", false);
         MoveControler.StopMove();
+        GuideLv = 1;
+        Guide1.gameObject.SetActive(true);
         //TrowLifebuoy = false;
     }
 
@@ -251,6 +298,9 @@ public class Lead : MonoBehaviour
         transform.eulerAngles = new Vector3(transform.eulerAngles.x, y, transform.eulerAngles.z);
 
         PassLv1 = true;
+        GuideLv = 3;
+        Guide1.gameObject.SetActive(false);
+        Guide2.gameObject.SetActive(false);
         //animator.Play("Throw", 0, 0.0f);
         for (float timer = 1; timer >= 0; timer -= Time.deltaTime)
         {
@@ -279,6 +329,10 @@ public class Lead : MonoBehaviour
     private bool IsEquipGun = false;
     public void EquipGun()
     {
+        GuideLv = 2;
+        Guide2.gameObject.SetActive(false);
+        Guide2.gameObject.SetActive(true);
+
         Gun.gameObject.SetActive(true);
         IsEquipGun = true;
 
