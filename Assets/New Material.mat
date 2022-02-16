@@ -70,11 +70,11 @@ Material:
     - _Oapcity: 0.73
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _PosX_1: 0.018106857
+    - _PosX_1: 0.011172218
     - _PosX_2: -0.13340163
-    - _PosY_1: -0.20181416
+    - _PosY_1: -0.0016098106
     - _PosY_2: -0.11423092
-    - _Radius_1: 0.02
+    - _Radius_1: 0.01
     - _Radius_2: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
