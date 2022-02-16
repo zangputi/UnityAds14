@@ -266,9 +266,9 @@ public class Main : MonoBehaviour
     }
 
     public Transform MapContent;
-    public void LeaderMove(GridLO endLo)
+    public void LeaderMove(GridLO endLo, bool click=false)
     {
-        if (GameFinish || endLo==null) return;
+        if (GameFinish || endLo==null || (click && (lead1.Guide1.gameObject.activeSelf == true || lead1.Guide2.gameObject.activeSelf == true))) return;
         //Vector3 leaderPos = MapContent.InverseTransformPoint(Lead.transform.position);
         //float gridSize = MapManager.Ins.GridSize;
         //float minX = MapManager.Ins.MapMinX;

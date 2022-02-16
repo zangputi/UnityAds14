@@ -51,7 +51,7 @@ public class GridClicker : MonoBehaviour
         {
             ClickDt = ClickDtT;
             DataManagement.GetInstance().SelectZombie = null;
-            Main.Ins.LeaderMove(lo);
+            Main.Ins.LeaderMove(lo, true);
             return;
         }
 

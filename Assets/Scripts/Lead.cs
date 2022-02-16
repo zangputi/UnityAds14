@@ -30,6 +30,7 @@ public class Lead : MonoBehaviour
 
     public Transform Npc1;
     public Transform Npc2;
+    public Zombie Z1;
     public Zombie Z2;
     public Zombie Z3;
     public Zombie Z4;
@@ -76,6 +77,10 @@ public class Lead : MonoBehaviour
     public RectTransform D3UIRoot;
 
     public Transform ShoStart;
+    public Transform GuideClicker;
+    public bool ToTakeGun = false;
+    public bool TakedGun = false;
+    public bool LockZb1 = false;
 
     Zombie curZb;
     // Update is called once per frame
@@ -92,12 +97,14 @@ public class Lead : MonoBehaviour
             RectTransformUtility.ScreenPointToLocalPointInRectangle(Guide1.transform as RectTransform, vec3, D3Camera, out lp);
 
             float GuideW = 50000.0f;
-            //Vector3 cInGuide = Guide1.transform.InverseTransformPoint(lp);
             float x1 = lp.x / GuideW * -1.0f - 0.0025f;
             float y1 = lp.y / GuideW * -1.0f;
             Material mt = Guide1.GetComponent<Image>().material;
             mt.SetFloat("_PosX_1", x1);
             mt.SetFloat("_PosY_1", y1);
+
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(D3UIRoot.transform as RectTransform, vec3, D3Camera, out lp);
+            GuideClicker.localPosition = lp;
         }
         else if(GuideLv == 2)
         {
@@ -113,6 +120,9 @@ public class Lead : MonoBehaviour
             Material mt = Guide2.GetComponent<Image>().material;
             mt.SetFloat("_PosX_1", x1);
             mt.SetFloat("_PosY_1", y1);
+
+            cInGuide = D3UIRoot.transform.InverseTransformPoint(ShoStart.transform.position);
+            GuideClicker.localPosition = cInGuide;
         }
 
         if (Main.GameFinish || null == MoveControler)
@@ -169,12 +179,15 @@ public class Lead : MonoBehaviour
             }
         }
 
-        if (Lifebuoy.activeSelf == false && clickName == "bucket")//拿枪
+        //if (Lifebuoy.activeSelf == false && clickName == "bucket")//拿枪
+        if (Lifebuoy.activeSelf == false && ToTakeGun==true &&TakedGun==false)//拿枪
         {
-            DataManagement.GetInstance().SelectZombie = null;
+            //DataManagement.GetInstance().SelectZombie = null;
             float dis = Vector3.Distance(BucketPoint.position, transform.position);
             if(dis < 1f)
             {
+                ToTakeGun = false;
+                TakedGun = true;
                 Main.onArrowEnd();
                 setFire = false;
             }
@@ -202,6 +215,11 @@ public class Lead : MonoBehaviour
             }
         }
 
+        if(LockZb1)
+        {
+            LockZb1 = false;
+            zb = Z1;
+        }
         //if (null != zb && !navMeshAgent.pathPending)
         if (null != zb)
         {
@@ -238,6 +256,12 @@ public class Lead : MonoBehaviour
         }
     }
 
+    public void WalkTo3DGun()
+    {
+        GridLO EndLo = MapManager.Ins.ResolveRoleStandGridItem(BucketPoint);
+        Main.LeaderMove(EndLo);
+    }
+
     internal void OnDie()
     {
         Lifebuoy.SetActive(false);
@@ -256,6 +280,7 @@ public class Lead : MonoBehaviour
         animator.SetBool("throw", true);
         Lifebuoy.gameObject.SetActive(false);
         LifebuoyAtk.gameObject.SetActive(true);
+        GuideClicker.gameObject.SetActive(true);
 
         this.transform.LookAt(zb.transform);
         for (float timer = 1f; timer >= 0; timer -= Time.deltaTime)
@@ -299,6 +324,7 @@ public class Lead : MonoBehaviour
 
         PassLv1 = true;
         GuideLv = 3;
+        GuideClicker.gameObject.SetActive(false);
         Guide1.gameObject.SetActive(false);
         Guide2.gameObject.SetActive(false);
         //animator.Play("Throw", 0, 0.0f);
