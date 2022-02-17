@@ -12,6 +12,7 @@ public class Zombie : MonoBehaviour
     public GameObject Hand;
     public GameObject ShotStart;
     public GameObject ShotStartUI;
+    public Transform VertigoUI;
     public Main Main;
 
     //private NavMeshAgent navMeshAgent;
@@ -70,6 +71,17 @@ public class Zombie : MonoBehaviour
             //vec3.z = 0.0f;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(D3UIRoot, vec3, D3Camera, out lp);
             ShotStartUI.transform.localPosition = lp;
+        }
+
+        if (VertigoUI != null)
+        {
+            Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(D3Camera, ShotStart.transform.position);
+            //vec3.x -= Screen.width * 0.5f;
+            //vec3.y -= Screen.height * 0.5f;
+            Vector2 lp = new Vector2();
+            //vec3.z = 0.0f;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(D3UIRoot, vec3, D3Camera, out lp);
+            VertigoUI.transform.localPosition = lp;
         }
         
 
@@ -140,6 +152,7 @@ public class Zombie : MonoBehaviour
         if(ShotStartUI)
         {
             ShotStartUI.SetActive(false);
+            VertigoUI.gameObject.SetActive(false);
         }
 
         if (Lifebuoy != null) Lifebuoy.gameObject.SetActive(false);
@@ -193,6 +206,7 @@ public class Zombie : MonoBehaviour
         Target = null;
         PlayIdle();
         MoveControler.StopMove();
+        VertigoUI.gameObject.SetActive(true);
     }
 
     public void SetShotStart(bool set)
@@ -201,6 +215,7 @@ public class Zombie : MonoBehaviour
         if(ShotStartUI)
         {
             ShotStartUI.SetActive(true);
+            VertigoUI.gameObject.SetActive(false);
         }
     }
 

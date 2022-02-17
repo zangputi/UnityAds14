@@ -356,7 +356,7 @@ public class Lead : MonoBehaviour
     public void EquipGun()
     {
         GuideLv = 2;
-        Guide2.gameObject.SetActive(false);
+        Guide1.gameObject.SetActive(false);
         Guide2.gameObject.SetActive(true);
 
         Gun.gameObject.SetActive(true);

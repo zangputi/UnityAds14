@@ -24,6 +24,8 @@ public class Npc : MonoBehaviour
         MoveControler = transform.GetComponent<D3ObjMove>();
         MoveControler.MoveFunc = new D3ObjMove.ActFunc(PlayMove);
         MoveControler.IdleFunc = new D3ObjMove.ActFunc(PlayIdle);
+        if(DirUI)
+            DirUI.gameObject.SetActive(false);
     }
     List<Transform> MoveNodes;
     public void StartMove(List<Transform> mtfs)
@@ -55,8 +57,34 @@ public class Npc : MonoBehaviour
     public RectTransform D3UIRoot;
     public Transform Help3DPosNode;
     public Camera D3UICamera;
+    public Transform DirUI;
+    public Transform Boat3D;
     void Update()
     {
+        if(Main.Ins.GameFinish)
+        {
+            DirUI.gameObject.SetActive(false);
+        }
+        if(DirUI&&DirUI.gameObject.activeSelf)
+        {
+            Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(D3UICamera, Boat3D.transform.position);
+            Vector2 lp = new Vector2();
+            //vec3.z = 0.0f;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(D3UIRoot, vec3, D3UICamera, out lp);
+            //DirUI.transform.localPosition = lp;
+            Vector2 v2 = DirUI.transform.localPosition;
+            Vector2 dir = lp - v2;
+            dir.Normalize();
+
+            float ang = Mathf.Acos(Vector2.Dot(Vector2.down, dir));
+            if (lp.x < v2.x)
+            {
+                ang = -ang;
+            }
+            ang = 180 / Mathf.PI * ang;
+            DirUI.localEulerAngles = new Vector3(DirUI.localEulerAngles.x, DirUI.localEulerAngles.y, ang);
+        }
+
         if (HelpUI != null && D3UIRoot != null && HelpUI.gameObject.activeSelf)
         {
             Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(D3UICamera, Help3DPosNode.transform.position);
@@ -66,7 +94,7 @@ public class Npc : MonoBehaviour
             HelpUI.transform.localPosition = lp;
         }
         
-        if (RoundZB2.IsDead == false) return;
+        if (RoundZB2.IsDead == false || RoundZB1.IsDead == false) return;
 
         if(RoundZB1 && RoundZB2 && RoundZB1.IsDead && RoundZB2.IsDead && IsStandUp == false)
         {
@@ -116,6 +144,9 @@ public class Npc : MonoBehaviour
         StartCoroutine(StandUp());
         if(HelpUI!= null)
             HelpUI.gameObject.SetActive(false);
+
+        if(DirUI)
+            DirUI.gameObject.SetActive(true);
     }
 
     IEnumerator StandUp()
