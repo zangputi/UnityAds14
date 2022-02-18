@@ -61,7 +61,7 @@ public class Npc : MonoBehaviour
     public Transform Boat3D;
     void Update()
     {
-        if(Main.Ins.GameFinish)
+        if(Main.Ins.GameFinish && DirUI)
         {
             DirUI.gameObject.SetActive(false);
         }
