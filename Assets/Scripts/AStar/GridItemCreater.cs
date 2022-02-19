@@ -131,6 +131,7 @@ public class GridItemCreater : MonoBehaviour
                     lo.lo.X = k;
                     lo.lo.Y = i;
                     recoder.GridLOList.Add(lo.lo);
+                    lo.Draw();
                 }
                 GridItems.Add(obj);
             }

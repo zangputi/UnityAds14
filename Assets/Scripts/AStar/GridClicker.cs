@@ -79,17 +79,18 @@ public class GridClicker : MonoBehaviour
     public static bool IsPlaying = true;
     private void OnMouseOver()
     {
-        if(!GridClicker.GridMapMouseD || IsPlaying)
-        {
-            return;
-        }
+        //if(!GridClicker.GridMapMouseD || IsPlaying)
+        //{
+        //    return;
+        //}
         lo.IsWall = GridClicker.CurMouseEventIsWall;
-        Draw();
+        if (IsPlaying == false)
+            Draw();
     }
 
     public void Draw()
     {
-        if (IsPlaying == false)
-            transform.GetComponent<MeshRenderer>().materials[0].color = lo.IsWall ? Color.red : DefaultCol;
+        //if (IsPlaying == false)
+            //transform.GetComponent<MeshRenderer>().materials[0].color = lo.IsWall ? Color.red : DefaultCol;
     }
 }

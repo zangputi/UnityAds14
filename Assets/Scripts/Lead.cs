@@ -196,7 +196,7 @@ public class Lead : MonoBehaviour
         if (Main.GameFinish == false)//救生艇
         {
             float dis = Vector3.Distance(BoatPoint.position, transform.position);
-            if (dis <= 5f)
+            if (dis <= 5f &&  Lifebuoy.activeSelf==false && Npc.Npc1Ready && Npc.Npc2Ready)
             {
                 //navMeshAgent.isStopped = true;
                 //navMeshAgent.updatePosition = false;
@@ -208,8 +208,9 @@ public class Lead : MonoBehaviour
                 Main.ShowResult();
                 setFire = false;
             }
-            else if (clickName == "ferry")
+            else if (clickName == "ferry" && Lifebuoy.activeSelf == false)
             {
+                clickName = "";
                 GridLO EndLo = MapManager.Ins.ResolveRoleStandGridItem(BoatPoint);
                 Main.LeaderMove(EndLo);
             }
@@ -268,11 +269,20 @@ public class Lead : MonoBehaviour
         setFire = true;
         MoveControler.StopMove(false);
         //animator.SetBool("Gun", true);
-        animator.SetBool("die", true);
+        //animator.SetBool("die", true);
+        if (TakedGun)
+        {
+            animator.Play("GunDead", 0, 0.0f);
+        }
+        else
+        {
+            animator.Play("die", 0, 0.0f);
+        }
+
     }
 
     private bool TrowLifebuoy = false;
-    private bool InTrowLifebuoy = false;
+    public bool InTrowLifebuoy = false;
     IEnumerator LifebuoyAnim()
     {
         MoveControler.StopMove(false);

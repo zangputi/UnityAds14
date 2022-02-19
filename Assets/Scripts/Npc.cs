@@ -15,6 +15,8 @@ public class Npc : MonoBehaviour
 
     private bool IsStandUp = false;
     private D3ObjMove MoveControler;
+    public static bool Npc1Ready = false;
+    public static bool Npc2Ready = false;
 
     public Transform HelpUI;
 
@@ -140,6 +142,14 @@ public class Npc : MonoBehaviour
     {
         if (null == animator || null == Target)
             return;
+        if(npcId == 1)
+        {
+            Npc1Ready = true;
+        }
+        else
+        {
+            Npc2Ready = true;
+        }
         IsStandUp = true;
         StartCoroutine(StandUp());
         if(HelpUI!= null)

@@ -25,6 +25,13 @@ public class Zombie : MonoBehaviour
         MoveControler = transform.GetComponent<D3ObjMove>();
         MoveControler.MoveFunc = new D3ObjMove.ActFunc(PlayMove);
         MoveControler.IdleFunc = new D3ObjMove.ActFunc(PlayIdle);
+
+        animator = GetComponent<Animator>();     //动画组件
+        if (TA)
+        {
+            GridLO lo = MapManager.Ins.ResolveRoleStandGridItem(TB.transform);//朝着目标移动
+            Main.ZBMove(transform, lo);
+        }
     }
 
     List<Transform> MoveNodes;
@@ -50,10 +57,9 @@ public class Zombie : MonoBehaviour
     void Start()
     {
         //navMeshAgent = GetComponent<NavMeshAgent>();//GetComponent<NavMeshAgent>(); //获取自身AI组件
-        animator = GetComponent<Animator>();     //动画组件
     }
 
-    private float ResetFindPathTime = 1500f;
+    public float ResetFindPathTime = 1500f;
     private float ResetFindPathTimeVal = 0f;
     /// <summary>
     /// 每帧刷新
@@ -116,7 +122,11 @@ public class Zombie : MonoBehaviour
         }
 
         if (null == MoveControler || null == Target || IsDead == true)
+        {
+            MoveToA();
+            MoveToB();
             return;
+        }
         ResetFindPathTimeVal -= 33.33f;
         if (ResetFindPathTimeVal > 0) return;
         ResetFindPathTimeVal = ResetFindPathTime;
@@ -134,11 +144,41 @@ public class Zombie : MonoBehaviour
             {
                 Main.FailGame();
             }
+            MoveControler.StopMove();
         }
         else
         {
             PlayMove();
             animator.SetBool("atk", false);
+        }
+    }
+
+    public Transform TA;
+    public Transform TB;
+    private void MoveToA()
+    {
+        if (!TA) return;
+        float dis = Vector3.Distance(TA.transform.position, transform.position);
+        if(Lifebuoy != null && Lifebuoy.activeSelf == false)
+        {
+            if(dis < 5f)
+            {
+                GridLO lo = MapManager.Ins.ResolveRoleStandGridItem(TB.transform);//朝着目标移动
+                Main.ZBMove(transform, lo);
+            }
+        }
+    }
+    private void MoveToB()
+    {
+        if (!TB) return;
+        float dis = Vector3.Distance(TB.transform.position, transform.position);
+        if (Lifebuoy != null && Lifebuoy.activeSelf == false)
+        {
+            if (dis < 5f)
+            {
+                GridLO lo = MapManager.Ins.ResolveRoleStandGridItem(TA.transform);//朝着目标移动
+                Main.ZBMove(transform, lo);
+            }
         }
     }
 
