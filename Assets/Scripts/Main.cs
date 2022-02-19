@@ -63,6 +63,7 @@ public class Main : MonoBehaviour
     public Transform S;
     public Transform BgM;
     public Camera D3UICamera;
+    public Transform HelpUI;
     public void ScreenAdapter()
     {
         if(Screen.width > Screen.height)
@@ -127,13 +128,17 @@ public class Main : MonoBehaviour
         //玩家点击了
     }
 
+    public bool IsNpcDead = false;
     IEnumerator Countdown()
     {        
-        for (float timer = 0.5f; timer >= 0; timer -= Time.deltaTime)
+        for (float timer = 0.1f; timer >= 0; timer -= Time.deltaTime)
         {
             yield return 0;
         }
-        lead1.OnDie();
+        if(IsNpcDead == false)
+        {
+            lead1.OnDie();
+        }
         for (float timer = 2f; timer >= 0; timer -= Time.deltaTime)
         {
             yield return 0;
@@ -145,6 +150,7 @@ public class Main : MonoBehaviour
     public void ShowResult()
     {
         winTips.SetActive(false);
+        HelpUI.gameObject.SetActive(false);
         //if (Screen.width > Screen.height)
         //{
         Transform Success = H.Find("Success");
