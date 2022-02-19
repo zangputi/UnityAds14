@@ -16219,8 +16219,10 @@ MonoBehaviour:
   S: {fileID: 1213053158}
   BgM: {fileID: 292541899}
   D3UICamera: {fileID: 802248793}
+  HelpUI: {fileID: 599823184}
   GameFinish: 0
   IsWin: 0
+  IsNpcDead: 0
   TiSi: {fileID: 320227630}
   MapContent: {fileID: 438919385}
 --- !u!4 &1821625298

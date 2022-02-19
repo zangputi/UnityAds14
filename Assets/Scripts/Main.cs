@@ -139,7 +139,7 @@ public class Main : MonoBehaviour
         {
             lead1.OnDie();
         }
-        for (float timer = 2f; timer >= 0; timer -= Time.deltaTime)
+        for (float timer = 0.1f; timer >= 0; timer -= Time.deltaTime)
         {
             yield return 0;
         }
