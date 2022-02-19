@@ -289,6 +289,8 @@ public class Main : MonoBehaviour
         //GameObject obj = MapManager.Ins.Creater.GridItems[idx];
         //GridLO StartLo = obj.transform.GetComponent<GridClicker>().lo;
         GridLO StartLo = MapManager.Ins.ResolveRoleStandGridItem(Lead.transform);
+        if (endLo.IsWall) return;
+        Debug.Log("LeaderMove");
         List<Transform> lineTfs = MapManager.Ins.FindPath8(StartLo, endLo);
         if (lineTfs.Count == 0) return;
         lead1.StartMove(lineTfs);

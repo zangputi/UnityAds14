@@ -61,6 +61,7 @@ public class Npc : MonoBehaviour
     public Camera D3UICamera;
     public Transform DirUI;
     public Transform Boat3D;
+    public Vector3 DirPos = new Vector3();
     void Update()
     {
         if(Main.Ins.GameFinish && DirUI)
@@ -85,6 +86,10 @@ public class Npc : MonoBehaviour
             }
             ang = 180 / Mathf.PI * ang;
             DirUI.localEulerAngles = new Vector3(DirUI.localEulerAngles.x, DirUI.localEulerAngles.y, ang);
+            DirPos.x = DirUI.transform.localPosition.x;
+            DirPos.y = DirUI.transform.localPosition.y;
+            DirPos.z = DirUI.transform.localPosition.z;
+            DirUI.transform.localPosition = DirUI.transform.localPosition;
         }
 
         if (HelpUI != null && D3UIRoot != null && HelpUI.gameObject.activeSelf)

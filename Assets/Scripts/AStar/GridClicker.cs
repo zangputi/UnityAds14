@@ -47,11 +47,14 @@ public class GridClicker : MonoBehaviour
     {
         GridClicker.StartClickGrid = this;
         GridClicker.CurMouseEventIsWall = !lo.IsWall;
-        if (IsPlaying && ClickDt <= 0f)
+        if (IsPlaying)
         {
-            ClickDt = ClickDtT;
-            DataManagement.GetInstance().SelectZombie = null;
-            Main.Ins.LeaderMove(lo, true);
+            if ( ClickDt <= 0f)
+            {
+                ClickDt = ClickDtT;
+                DataManagement.GetInstance().SelectZombie = null;
+                Main.Ins.LeaderMove(lo, true);
+            }
             return;
         }
 
@@ -83,6 +86,11 @@ public class GridClicker : MonoBehaviour
         //{
         //    return;
         //}
+        if (IsPlaying)
+        {
+            return;
+        }
+
         lo.IsWall = GridClicker.CurMouseEventIsWall;
         if (IsPlaying == false)
             Draw();
@@ -91,6 +99,6 @@ public class GridClicker : MonoBehaviour
     public void Draw()
     {
         //if (IsPlaying == false)
-            //transform.GetComponent<MeshRenderer>().materials[0].color = lo.IsWall ? Color.red : DefaultCol;
+        //transform.GetComponent<MeshRenderer>().materials[0].color = lo.IsWall ? Color.red : DefaultCol;
     }
 }

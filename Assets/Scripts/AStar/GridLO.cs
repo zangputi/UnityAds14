@@ -9,4 +9,5 @@ public class GridLO
     public bool IsWall;
     public int X;
     public int Y;
+    public int Idx;
 }

@@ -133,6 +133,7 @@ public class GridItemCreater : MonoBehaviour
                     recoder.GridLOList.Add(lo.lo);
                     lo.Draw();
                 }
+                lo.lo.Idx = lo.lo.X + lo.lo.Y * MapManager.Ins.XMax;
                 GridItems.Add(obj);
             }
         }
