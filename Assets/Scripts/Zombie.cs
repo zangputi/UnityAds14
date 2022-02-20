@@ -167,7 +167,7 @@ public class Zombie : MonoBehaviour
         float dis = Vector3.Distance(TA.transform.position, transform.position);
         if(Lifebuoy != null && Lifebuoy.activeSelf == false)
         {
-            if(dis < 5f)
+            if(dis < 2f)
             {
                 GridLO lo = MapManager.Ins.ResolveRoleStandGridItem(TB.transform);//朝着目标移动
                 Main.ZBMove(transform, lo);
@@ -180,7 +180,7 @@ public class Zombie : MonoBehaviour
         float dis = Vector3.Distance(TB.transform.position, transform.position);
         if (Lifebuoy != null && Lifebuoy.activeSelf == false)
         {
-            if (dis < 5f)
+            if (dis < 2f)
             {
                 GridLO lo = MapManager.Ins.ResolveRoleStandGridItem(TA.transform);//朝着目标移动
                 Main.ZBMove(transform, lo);

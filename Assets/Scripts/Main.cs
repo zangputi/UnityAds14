@@ -328,4 +328,18 @@ public class Main : MonoBehaviour
         }
     }
 
+    public Transform HCopyHand;
+    public Transform HDownloadHand;
+    public void HCopyBtnClick()
+    {
+        HCopyHand.gameObject.SetActive(false);
+        HDownloadHand.gameObject.SetActive(true);
+    }
+    public Transform SCopyHand;
+    public Transform SDownloadHand;
+    public void SCopyBtnClick()
+    {
+        SCopyHand.gameObject.SetActive(false);
+        SDownloadHand.gameObject.SetActive(true);
+    }
 }

@@ -6,6 +6,7 @@ using UnityEngine.AI;
 public class Npc : MonoBehaviour
 {
     public Transform Target;
+    public Transform npc2;
     //private NavMeshAgent navMeshAgent;
     private Animator animator;
     private Animator animatorRun;
@@ -64,6 +65,7 @@ public class Npc : MonoBehaviour
     public RectTransform D3UIRoot;
     public Transform Help3DPosNode;
     public Camera D3UICamera;
+    public Camera UICamera;
     public Transform DirUI;
     public Transform DirUI1;
     public Transform NextStep;
@@ -79,7 +81,7 @@ public class Npc : MonoBehaviour
         }
         if(DirUI&&DirUI.gameObject.activeSelf)
         {
-            Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(D3UICamera, Boat3D.transform.position);
+            Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(UICamera, Boat3D.transform.position);
             Vector2 lp = new Vector2();
             //vec3.z = 0.0f;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(D3UIRoot, vec3, D3UICamera, out lp);
@@ -93,10 +95,11 @@ public class Npc : MonoBehaviour
             {
                 ang = -ang;
             }
+            Debug.Log(ang);
             ang = 180 / Mathf.PI * ang;
             Vector3 localEulerAngles = new Vector3(DirUI.localEulerAngles.x, DirUI.localEulerAngles.y, ang);
             DirUI1.localEulerAngles = localEulerAngles;
-
+            DirUI.localEulerAngles = localEulerAngles;
         }
 
         if (HelpUI != null && D3UIRoot != null && HelpUI.gameObject.activeSelf)
@@ -116,7 +119,8 @@ public class Npc : MonoBehaviour
         }
 
         float dis = Vector3.Distance(Target.position, transform.position);
-        if (dis < 5f)
+        //float dis2 = Vector3.Distance(npc2.position, transform.position);
+        if (dis < 5f )
         {
             MoveControler.StopMove();
             return;
@@ -157,8 +161,8 @@ public class Npc : MonoBehaviour
 
         if(DirUI)
         {
-            DirUI1.gameObject.SetActive(true);
-            DirUI.gameObject.SetActive(true);
+            DirUI1.gameObject.SetActive(false);//true
+            DirUI.gameObject.SetActive(false);//true
             NextStep.gameObject.SetActive(true);
         }
     }

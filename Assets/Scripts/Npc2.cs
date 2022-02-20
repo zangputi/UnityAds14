@@ -6,6 +6,7 @@ using UnityEngine.AI;
 public class Npc2 : MonoBehaviour
 {
     public Transform Target;
+    public Transform npc1;
     //private NavMeshAgent navMeshAgent;
     private Animator animator;
     private Animator animatorRun;
@@ -117,7 +118,8 @@ public class Npc2 : MonoBehaviour
         }
 
         float dis = Vector3.Distance(Target.position, transform.position);
-        if (dis < 5f)
+        float dis1 = Vector3.Distance(npc1.position, transform.position);
+        if (dis < 5f || dis1 < 1f)
         {
             MoveControler.StopMove();
             return;

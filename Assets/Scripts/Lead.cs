@@ -73,7 +73,8 @@ public class Lead : MonoBehaviour
     public Transform Guide2;
     public int GuideLv = 0;
     public Camera D3Camera;
-    public Transform SceneGun;
+    public Transform SceneGun1;
+    public Transform SceneGun2;
     public RectTransform D3UIRoot;
 
     public Transform ShoStart;
@@ -92,7 +93,7 @@ public class Lead : MonoBehaviour
 
         if(GuideLv == 1)
         {
-            Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(D3Camera, SceneGun.position);
+            Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(D3Camera, SceneGun1.position);
             Vector2 lp = new Vector2();
             RectTransformUtility.ScreenPointToLocalPointInRectangle(Guide1.transform as RectTransform, vec3, D3Camera, out lp);
 
@@ -309,6 +310,8 @@ public class Lead : MonoBehaviour
         MoveControler.StopMove();
         GuideLv = 1;
         Guide1.gameObject.SetActive(true);
+        SceneGun2.gameObject.SetActive(false);
+        SceneGun1.gameObject.SetActive(true);
         //TrowLifebuoy = false;
     }
 

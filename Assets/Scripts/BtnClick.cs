@@ -31,4 +31,21 @@ public class BtnClick : MonoBehaviour
             ld.LockZb1 = true;
         }
     }
+
+    public void HCopyBtnClick(bool scriptCall = false)
+    {
+        Main.Ins.HCopyBtnClick();
+        if (scriptCall == false)
+        {
+            SCopyBtnClick(true);
+        }
+    }
+    public void SCopyBtnClick(bool scriptCall=false)
+    {
+        Main.Ins.SCopyBtnClick();
+        if(scriptCall == false)
+        {
+            HCopyBtnClick(true);
+        }
+    }
 }
