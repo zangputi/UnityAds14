@@ -21,7 +21,7 @@ public class Main : MonoBehaviour
 
     public Lead lead1;
     public Npc girl;
-    public Npc girl1;
+    public Npc2 girl1;
 
     public Zombie zb1;
     public Zombie zb2;
@@ -184,8 +184,8 @@ public class Main : MonoBehaviour
 
         girl.GetComponent<Animator>().speed = 0.0f;
         girl.transform.Find("HelpSound").gameObject.SetActive(false);
-        girl1.GetComponent<Animator>().speed = 0.0f;
-        girl1.transform.Find("HelpSound").gameObject.SetActive(false);
+        girl1.StopAni();
+        girl1.StopHelp();
         //}
         //else
         //{
@@ -241,15 +241,6 @@ public class Main : MonoBehaviour
         ht.transform.localPosition = pos;
     }
 
-    public void ZBMove(Zombie zb, GridLO endLO)
-    {
-
-    }
-
-    public void NpcMove(Npc npc, GridLO endLO)
-    {
-
-    }
 
     public Transform TiSi;
     public void ShowTiShi(Vector3 clickPos)
@@ -325,8 +316,16 @@ public class Main : MonoBehaviour
         GridLO StartLo = MapManager.Ins.ResolveRoleStandGridItem1(pos);
         List<Transform> lineTfs = MapManager.Ins.FindPath8(StartLo, endLo);
         if (lineTfs.Count == 0) return;
-        Npc npc = tf.GetComponent<Npc>();
-        npc.StartMove(lineTfs);
+        if (tf.name=="girl")
+        {
+            Npc npc = tf.GetComponent<Npc>();
+            npc.StartMove(lineTfs);
+        }
+        else
+        {
+            Npc2 npc2 = tf.GetComponent<Npc2>();
+            npc2.StartMove(lineTfs);
+        }
     }
 
 }

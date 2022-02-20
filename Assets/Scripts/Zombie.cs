@@ -140,8 +140,9 @@ public class Zombie : MonoBehaviour
             PlayIdle();
             animator.SetBool("atk", true);
             Npc npc = Target.GetComponent<Npc>();
+            Npc2 npc2 = Target.GetComponent<Npc2>();
             Target = null;
-            if(npc!=null)
+            if(npc!=null || npc2!=null)
             {
                 Main.Ins.IsNpcDead = true;
             }

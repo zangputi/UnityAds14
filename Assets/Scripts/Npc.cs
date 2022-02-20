@@ -8,6 +8,7 @@ public class Npc : MonoBehaviour
     public Transform Target;
     //private NavMeshAgent navMeshAgent;
     private Animator animator;
+    private Animator animatorRun;
     public GameObject SelectedBox;
 
     public Zombie RoundZB1;
@@ -27,7 +28,11 @@ public class Npc : MonoBehaviour
         MoveControler.MoveFunc = new D3ObjMove.ActFunc(PlayMove);
         MoveControler.IdleFunc = new D3ObjMove.ActFunc(PlayIdle);
         if(DirUI)
+        {
+            DirUI1.gameObject.SetActive(false);
             DirUI.gameObject.SetActive(false);
+            NextStep.gameObject.SetActive(false);
+        }
     }
     List<Transform> MoveNodes;
     public void StartMove(List<Transform> mtfs)
@@ -38,12 +43,7 @@ public class Npc : MonoBehaviour
 
     public void PlayMove()
     {
-        animator.SetBool("run", true);
-    }
-
-    public void PlayIdle()
-    {
-        animator.SetBool("run", false);
+        PlayRun();
     }
 
 
@@ -51,6 +51,11 @@ public class Npc : MonoBehaviour
     {
         //navMeshAgent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        Transform Root = transform.Find("Root");
+        if(Root)
+        {
+            animatorRun = Root.GetComponent<Animator>();
+        }
     }
 
     private float ResetFindPathTime = 1500f;
@@ -60,6 +65,8 @@ public class Npc : MonoBehaviour
     public Transform Help3DPosNode;
     public Camera D3UICamera;
     public Transform DirUI;
+    public Transform DirUI1;
+    public Transform NextStep;
     public Transform Boat3D;
     public Vector3 DirPos = new Vector3();
     void Update()
@@ -67,6 +74,8 @@ public class Npc : MonoBehaviour
         if(Main.Ins.GameFinish && DirUI)
         {
             DirUI.gameObject.SetActive(false);
+            DirUI1.gameObject.SetActive(false);
+            NextStep.gameObject.SetActive(false);
         }
         if(DirUI&&DirUI.gameObject.activeSelf)
         {
@@ -85,11 +94,9 @@ public class Npc : MonoBehaviour
                 ang = -ang;
             }
             ang = 180 / Mathf.PI * ang;
-            DirUI.localEulerAngles = new Vector3(DirUI.localEulerAngles.x, DirUI.localEulerAngles.y, ang);
-            DirPos.x = DirUI.transform.localPosition.x;
-            DirPos.y = DirUI.transform.localPosition.y;
-            DirPos.z = DirUI.transform.localPosition.z;
-            DirUI.transform.localPosition = DirUI.transform.localPosition;
+            Vector3 localEulerAngles = new Vector3(DirUI.localEulerAngles.x, DirUI.localEulerAngles.y, ang);
+            DirUI1.localEulerAngles = localEulerAngles;
+
         }
 
         if (HelpUI != null && D3UIRoot != null && HelpUI.gameObject.activeSelf)
@@ -120,21 +127,7 @@ public class Npc : MonoBehaviour
         ResetFindPathTimeVal = ResetFindPathTime;
         GridLO lo = MapManager.Ins.ResolveRoleStandGridItem(Target.transform);//朝着目标移动
         Main.Ins.NpcMove(transform, lo, npcId, Target.transform);
-
-        //if (navMeshAgent.enabled && !navMeshAgent.pathPending)
-        //{
-        //    navMeshAgent.SetDestination(Target.position);
-        //    if (navMeshAgent.remainingDistance < 5f)
-        //    {
-        //        navMeshAgent.isStopped = true;
-        //        animator.SetBool("run", false);
-        //    }
-        //    else
-        //    {
-        //        navMeshAgent.isStopped = false;
-        //        animator.SetBool("run", true);
-        //    }
-        //}
+        
 
     }
 
@@ -156,23 +149,72 @@ public class Npc : MonoBehaviour
             Npc2Ready = true;
         }
         IsStandUp = true;
-        StartCoroutine(StandUp());
-        if(HelpUI!= null)
+        PlayStandUp();
+        //StartCoroutine(StandUp());
+
+        if (HelpUI!= null)
             HelpUI.gameObject.SetActive(false);
 
         if(DirUI)
+        {
+            DirUI1.gameObject.SetActive(true);
             DirUI.gameObject.SetActive(true);
+            NextStep.gameObject.SetActive(true);
+        }
     }
 
-    IEnumerator StandUp()
+    void StandUp()
     {
         animator.SetBool("standup", true);
-        for (float timer = 0.67f; timer >= 0; timer -= Time.deltaTime)
-        {
-            yield return 0;
-        }
+        //for (float timer = 0.67f; timer >= 0; timer -= Time.deltaTime)
+        //{
+        //    yield return 0;
+        //}
         //navMeshAgent.enabled = true;
         //navMeshAgent.SetDestination(Target.position);
-        animator.SetBool("run", true);
+        //animator.SetBool("run", true);
+        PlayRun();
+    }
+
+    private void PlayStandUp()
+    {
+        Npc2ActiveIdleNode();
+        StandUp();
+        //StartCoroutine(StandUp());
+    }
+
+    public void PlayIdle()
+    {
+        Npc2ActiveIdleNode();
+        animator.SetBool("run", false);
+    }
+
+    private void PlayRun()
+    {
+        if (npcId==1)
+        {
+            Npc2ActiveIdleNode();
+            animator.SetBool("run", true);
+        }
+        else
+        {
+            Npc2ActiveRunNode();
+            if(animatorRun)
+                animatorRun.Play("Run", 0, 0.0f);
+        }
+    }
+
+    private void Npc2ActiveIdleNode()
+    {
+        animator.enabled = true;
+        if (animatorRun)
+            animatorRun.enabled = false;
+    }
+
+    private void Npc2ActiveRunNode()
+    {
+        animator.enabled = false;
+        if (animatorRun)
+            animatorRun.enabled = true;
     }
 }
