@@ -35,6 +35,7 @@ public class Lead : MonoBehaviour
     public Zombie Z3;
     public Zombie Z4;
     public Zombie Z5;
+    public Transform LvUpEffect;
     public enum LeadState
     {
         Melee,
@@ -84,6 +85,10 @@ public class Lead : MonoBehaviour
     public bool LockZb1 = false;
 
     Zombie curZb;
+    public Transform OilBarrelPos;
+    public Transform MedicalBoxPos;
+    public Transform OilBarrel;
+    public Transform MedicalBox;
     // Update is called once per frame
     void Update()
     {
@@ -169,6 +174,19 @@ public class Lead : MonoBehaviour
                 {
                     GridLO EndLo = MapManager.Ins.ResolveRoleStandGridItem(BucketPoint);
                     Main.LeaderMove(EndLo);
+                    clickName = "";
+                }
+                else if (clickName == "OilBarrel")
+                {
+                    GridLO EndLo = MapManager.Ins.ResolveRoleStandGridItem(OilBarrelPos);
+                    Main.LeaderMove(EndLo);
+                    clickName = "";
+                }
+                else if (clickName == "MedicalBox")
+                {
+                    GridLO EndLo = MapManager.Ins.ResolveRoleStandGridItem(MedicalBoxPos);
+                    Main.LeaderMove(EndLo);
+                    clickName = "";
                 }
                 else 
                 {
@@ -180,25 +198,42 @@ public class Lead : MonoBehaviour
             }
         }
 
+        float dis = 0.0f;
         //if (Lifebuoy.activeSelf == false && clickName == "bucket")//拿枪
         if (Lifebuoy.activeSelf == false && ToTakeGun==true &&TakedGun==false)//拿枪
         {
             //DataManagement.GetInstance().SelectZombie = null;
-            float dis = Vector3.Distance(BucketPoint.position, transform.position);
+            dis = Vector3.Distance(BucketPoint.position, transform.position);
             if(dis < 1f)
             {
                 ToTakeGun = false;
                 TakedGun = true;
                 Main.onArrowEnd();
+                PlayLvUpEff();
                 setFire = false;
             }
+        }
+        //医疗箱 
+        dis = Vector3.Distance(MedicalBoxPos.position, transform.position);
+        if (MedicalBox.gameObject.activeSelf && dis < 2f)
+        {
+            MedicalBox.gameObject.SetActive(false);
+            PlayLvUpEff();
+        }
+        //油箱
+        dis = Vector3.Distance(OilBarrelPos.position, transform.position);
+        if (OilBarrel.gameObject.activeSelf && dis < 2f)
+        {
+            OilBarrel.gameObject.SetActive(false);
+            PlayLvUpEff();
         }
 
         if (Main.GameFinish == false)//救生艇
         {
-            float dis = Vector3.Distance(BoatPoint.position, transform.position);
-            if (dis <= 5f &&  Lifebuoy.activeSelf==false && Npc.Npc1Ready && Npc.Npc2Ready)
-            {
+            dis = Vector3.Distance(BoatPoint.position, transform.position);
+            if (dis <= 5f && Lifebuoy.activeSelf == false)
+                //if (dis <= 5f && Lifebuoy.activeSelf == false && Npc.Npc1Ready && Npc.Npc2Ready)
+                {
                 //navMeshAgent.isStopped = true;
                 //navMeshAgent.updatePosition = false;
                 PlayIdle();
@@ -225,7 +260,7 @@ public class Lead : MonoBehaviour
         //if (null != zb && !navMeshAgent.pathPending)
         if (null != zb)
         {
-            float dis = Vector3.Distance(zb.transform.position, transform.position);
+            dis = Vector3.Distance(zb.transform.position, transform.position);
             switch (lState)
             {
                 case LeadState.Melee:
@@ -395,5 +430,18 @@ public class Lead : MonoBehaviour
     {
         Debug.Log("PlayIdle");
         animator.SetBool("walk", false);
+    }
+
+    public Transform LvUpPos;
+    public void PlayLvUpEff()
+    {
+        LvUpEffect.gameObject.SetActive(true);
+
+        Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(D3Camera, LvUpPos.transform.position);
+        Vector2 lp = new Vector2();
+        //vec3.z = 0.0f;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(D3UIRoot, vec3, D3Camera, out lp);
+        lp.y += 50f;
+        LvUpEffect.transform.localPosition = lp;
     }
 }
