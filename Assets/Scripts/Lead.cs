@@ -89,9 +89,16 @@ public class Lead : MonoBehaviour
     public Transform MedicalBoxPos;
     public Transform OilBarrel;
     public Transform MedicalBox;
+
+    public Transform HpRoot;
+    public Transform Hp1;
+    public Transform Hp2;
     // Update is called once per frame
     void Update()
     {
+        DoFlyItem();
+        SynHpBar();
+
         GridClicker.ClickDt -= 33.33f;
         if (fire.activeSelf || InTrowLifebuoy)//在开火或者扔泳圈时不可动
             return;
@@ -218,7 +225,9 @@ public class Lead : MonoBehaviour
         if (MedicalBox.gameObject.activeSelf && dis < 2f)
         {
             MedicalBox.gameObject.SetActive(false);
+            Hp2.gameObject.SetActive(true);
             PlayLvUpEff();
+            ToFlyItem(1);
         }
         //油箱
         dis = Vector3.Distance(OilBarrelPos.position, transform.position);
@@ -226,6 +235,7 @@ public class Lead : MonoBehaviour
         {
             OilBarrel.gameObject.SetActive(false);
             PlayLvUpEff();
+            ToFlyItem(2);
         }
 
         if (Main.GameFinish == false)//救生艇
@@ -241,6 +251,7 @@ public class Lead : MonoBehaviour
                 MoveControler.StopMove();
 
                 Main.WinGame();
+                HpRoot.gameObject.SetActive(false);
                 Main.ShowResult();
                 setFire = false;
             }
@@ -301,6 +312,7 @@ public class Lead : MonoBehaviour
 
     internal void OnDie()
     {
+        HpRoot.gameObject.SetActive(false);
         Lifebuoy.SetActive(false);
         setFire = true;
         MoveControler.StopMove(false);
@@ -443,5 +455,98 @@ public class Lead : MonoBehaviour
         RectTransformUtility.ScreenPointToLocalPointInRectangle(D3UIRoot, vec3, D3Camera, out lp);
         lp.y += 50f;
         LvUpEffect.transform.localPosition = lp;
+    }
+
+    public Transform HpPos;
+    public void SynHpBar()
+    {
+        if (HpRoot != null && D3UIRoot != null && HpRoot.gameObject.activeSelf)
+        {
+            Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(D3Camera, HpPos.transform.position);
+            Vector2 lp = new Vector2();
+            //vec3.z = 0.0f;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(D3UIRoot, vec3, D3Camera, out lp);
+            HpRoot.transform.localPosition = lp;
+        }
+    }
+
+    public Image UIOil;
+    public Image UIMac;
+    public Transform BagPos;
+    public void ToFlyItem(int type )
+    {
+        //医疗箱
+        Transform tar;
+        Transform tar1;
+        if (type==1)
+        {
+            tar = MedicalBox;
+            tar1 = UIMac.transform;
+        }
+        else
+        {
+            tar = OilBarrel;
+            tar1 = UIOil.transform;
+        }
+        tar1.gameObject.SetActive(true);
+        Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(D3Camera, tar.transform.position);
+        Vector2 lp = new Vector2();
+        //vec3.z = 0.0f;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(D3UIRoot, vec3, D3Camera, out lp);
+        UIMac.transform.localPosition = lp;
+        UIOil.transform.localPosition = lp;
+        StartFlyItem(tar1);
+    }
+
+    private Transform FlyItem;
+    private void StartFlyItem(Transform img)
+    {
+        FlyItem = img;
+        Dir = BagPos.localPosition - FlyItem.localPosition;
+        Dir.Normalize();
+        StartFlyPos = FlyItem.localPosition;
+        Transform dn;
+        if(Screen.width>Screen.height)
+        {
+            dn = DownloadH;
+        }
+        else
+        {
+            dn = DownloadS;
+        }
+        FlyDis = Vector2.Distance(dn.localPosition, FlyItem.localPosition);
+        FlyDurT = 0.0f;
+    }
+
+    public Transform DownloadH;
+    public Transform DownloadS;
+
+    private float FlyDurTT = 1000f;
+    private float FlyDurT = 0f;
+    private Vector3 Dir;
+    private Vector3 StartFlyPos;
+    private float FlyDis;
+    private void DoFlyItem()
+    {
+        if (!FlyItem)
+            return;
+        float dt = 33.33f;
+        FlyDurT += dt;
+        float per = FlyDurT / FlyDurTT;
+
+        bool end = false;
+        if(per > 1.0f)
+        {
+            per = 1.0f;
+            end = true;
+        }
+        Vector3 curPos = StartFlyPos + per * FlyDis * Dir;
+        FlyItem.localPosition = curPos;
+
+        if (end)
+        {
+            FlyItem.gameObject.SetActive(false);
+            FlyItem = null;
+        }
     }
 }

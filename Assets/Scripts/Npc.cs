@@ -164,6 +164,22 @@ public class Npc : MonoBehaviour
             DirUI1.gameObject.SetActive(false);//true
             DirUI.gameObject.SetActive(false);//true
             NextStep.gameObject.SetActive(true);
+            PlayLove();
+        }
+    }
+
+    public Transform Love;
+    public Transform LovePos;
+    void PlayLove()
+    {
+        if (Love != null && D3UIRoot != null)
+        {
+            Vector3 vec3 = RectTransformUtility.WorldToScreenPoint(D3UICamera, LovePos.transform.position);
+            Vector2 lp = new Vector2();
+            //vec3.z = 0.0f;
+            Love.gameObject.SetActive(true);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(D3UIRoot, vec3, D3UICamera, out lp);
+            Love.transform.localPosition = lp;
         }
     }
 
